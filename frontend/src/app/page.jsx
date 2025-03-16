@@ -13,6 +13,7 @@ import {
 import "../styles/main.css";
 import Footer from "@/components/Footer";
 import Pagination from "@/components/Pagination";
+import { Button } from "@/components/ui/button";
 import Category from "@/components/Category";
 export default function Home() {
   return (
@@ -25,7 +26,13 @@ export default function Home() {
           <div className='sell-content'>
             <h1 className='sell-title'>Sell your watch now!</h1>
             <p className='sell-description'>Put your watch up for sale now</p>
-            <button className='button'>Button</button>
+            {/* <button className='button'>Button</button>
+             */}
+            <Link href='/addEntity'>
+              <Button variant='outline' className='button'>
+                Sell your watch
+              </Button>
+            </Link>
           </div>
         </section>
 

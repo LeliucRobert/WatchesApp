@@ -12,8 +12,20 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import * as React from "react";
-
+import EditForm from "@/components/EditForm";
 export default function WatchlyUI() {
   const [uploadedFiles, setUploadedFiles] = useState([
     { name: "drag-drop.jpg (50.7kb)", progress: 100 },
@@ -30,6 +42,8 @@ export default function WatchlyUI() {
 
   return (
     <div className='watchly'>
+      <EditForm />
+
       <main className='main'>
         <div className='container'>
           {/* Sell your watch form */}
@@ -189,9 +203,6 @@ export default function WatchlyUI() {
                       </p>
 
                       <div className='listing-card__actions'>
-                        <button className='listing-card__edit'>
-                          EDIT LISTING
-                        </button>
                         <button className='listing-card__delete'>
                           <svg
                             width='16'
