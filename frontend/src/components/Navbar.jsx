@@ -10,40 +10,44 @@ export default function Navbar() {
     <div className='header-container'>
       <div className='logo'>
         <Image
-          src='/placeholder.svg?height=24&width=24'
+          src='/images/Watch.png'
           alt='Watchly Logo'
-          width={24}
-          height={24}
+          width={44}
+          height={44}
           className='logo-image'
         />
         <span className='logo-text'>Watchly</span>
       </div>
 
-      <nav className='nav'>
-        <Link href='#' className='nav-link'>
-          Home
-        </Link>
-        <Link href='#' className='nav-link'>
-          Explore
-        </Link>
-        <Link href='#' className='nav-link'>
-          Sell a watch
-        </Link>
-      </nav>
+      <div className='nav-actions'>
+        {/* Navigation Links */}
+        <nav className='nav'>
+          <Link href='/' className='nav-link'>
+            Home
+          </Link>
+          <Link href='/explore' className='nav-link'>
+            Explore
+          </Link>
+          <Link href='/addEntity' className='nav-link'>
+            Sell a watch
+          </Link>
+        </nav>
 
-      <div className='header-actions'>
-        <button className='icon-button'>
-          <Heart className='icon' />
-        </button>
-        <button className='icon-button'>
-          <User className='icon' />
-        </button>
-        <button className='icon-button'>
-          <ShoppingCart className='icon' />
-        </button>
-        <button className='icon-button'>
-          <Moon className='icon' />
-        </button>
+        {/* Action Buttons */}
+        <div className='header-actions'>
+          <button className='icon-button'>
+            <Heart className='icon' />
+          </button>
+          <button className='icon-button'>
+            <User className='icon' />
+          </button>
+          <button className='icon-button'>
+            <ShoppingCart className='icon' />
+          </button>
+          <button className='icon-button'>
+            <Moon className='icon' />
+          </button>
+        </div>
       </div>
     </div>
   );

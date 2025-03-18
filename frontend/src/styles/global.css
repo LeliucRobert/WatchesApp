@@ -1,0 +1,51 @@
+/**
+ * === GLOBAL STYLES ===
+ *
+ * @format
+ */
+
+/* Import Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap");
+
+:root {
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #f3f3f3;
+  --color-gray-300: #e3e3e3;
+  --color-gray-400: #d9d9d9;
+  --color-gray-500: #b5b5b5;
+  --color-gray-600: #979797;
+  --color-gray-700: #757575;
+  --color-gray-800: #454545;
+  --color-gray-900: #333333;
+  --color-dark: #1c1c1c;
+  --color-blue: #0081fe;
+  --color-red: #eb5757;
+
+  --font-family: "Roboto", sans-serif;
+  --border-radius: 4px;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set Global Font */
+body {
+  font-family: var(--font-family);
+
+  background-color: var(--color-white);
+  color: var(--color-black);
+  line-height: 1.5;
+}
+
+.header {
+  margin-top: 15px;
+}
+
+/* Common Container (Centers content) */
