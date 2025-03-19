@@ -39,9 +39,10 @@ hr {
 
 /* Header styles */
 
-.logo {
+.logo-edit {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -78,7 +79,7 @@ hr {
   height: 32px;
 }
 
-.logo h1 {
+.logo-edit h1 {
   font-size: 32px;
   font-weight: bold;
 }

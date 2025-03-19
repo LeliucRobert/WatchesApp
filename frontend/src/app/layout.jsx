@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/global.css";
 import Navbar from "@/components/Navbar";
+import { EntityProvider } from "@/context/EntityContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,7 +30,9 @@ export default function RootLayout({ children }) {
           <Navbar />
         </header>
 
-        <main>{children}</main>
+        <main>
+          <EntityProvider>{children}</EntityProvider>
+        </main>
       </body>
     </html>
   );
