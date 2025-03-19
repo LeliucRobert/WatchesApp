@@ -39,7 +39,11 @@ export default function EditForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className='trigger-btn'>Add New Watch</Button>
+        {/* <Button className='trigger-btn'>Add New Watch</Button> */}
+        <button className='listing-card__edit'>
+          EDIT LISTING
+          <ArrowRight className='arrow-icon' />
+        </button>
       </DialogTrigger>
       <DialogContent className='dialog-content'>
         <DialogHeader>
@@ -49,16 +53,17 @@ export default function EditForm() {
           </DialogDescription> */}
         </DialogHeader>
         <div className='watchly-container'>
-          <header className='header'>
-            <div className='logo'>
-              <div className='watch-icon'>
-                <Watch className='watch-face' strokeWidth={1.5} />
-                <div className='watch-circle'></div>
-                <div className='watch-band'></div>
-              </div>
-              <h1>Watchly</h1>
-            </div>
-          </header>
+          <div className='logo-edit'>
+            <Image
+              src='/images/Watch.png'
+              alt='Watchly Logo'
+              width={44}
+              height={44}
+              className='logo-image'
+            />
+
+            <h1>Watchly</h1>
+          </div>
 
           <hr />
 
