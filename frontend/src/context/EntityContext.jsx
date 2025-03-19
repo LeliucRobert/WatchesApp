@@ -28,8 +28,18 @@ export const EntityProvider = ({ children }) => {
     );
   };
 
+  const editEntity = (updatedEntity) => {
+    setEntities((prevEntities) =>
+      prevEntities.map((entity) =>
+        entity.id === updatedEntity.id ? updatedEntity : entity
+      )
+    );
+  };
+
   return (
-    <EntityContext.Provider value={{ entities, addEntity, deleteEntity }}>
+    <EntityContext.Provider
+      value={{ entities, addEntity, deleteEntity, editEntity }}
+    >
       {children}
     </EntityContext.Provider>
   );

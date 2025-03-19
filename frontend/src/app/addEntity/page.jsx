@@ -42,7 +42,9 @@ export default function WatchlyUI() {
                     name={watch.name}
                     description={watch.description}
                     price={watch.price}
-                    image={watch.image} // Ensure WatchCard supports this prop
+                    images={watch.images}
+                    category={watch.category}
+                    condition={watch.condition} // Ensure WatchCard supports this prop
                   />
                 </CarouselItem>
               ))}

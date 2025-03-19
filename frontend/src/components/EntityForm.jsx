@@ -7,22 +7,25 @@ import { useEntities } from "@/context/EntityContext";
 import { Upload } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import "../styles/components/EntityForm.css";
-export default function EntityForm() {
+export default function EntityForm({ initialData, onSubmit }) {
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
     fileInputRef.current.click(); // Triggers file input
   };
-  const { addEntity } = useEntities();
+  const { addEntity, editEntity } = useEntities();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    condition: "",
-    description: "",
-    price: "",
-    image: null,
-  });
+  const isEditing = Boolean(initialData); // Check if editing or adding
+  const [formData, setFormData] = useState(
+    initialData || {
+      name: "",
+      category: "",
+      condition: "",
+      description: "",
+      price: "",
+      images: [],
+    }
+  );
 
   const [formErrors, setFormErrors] = useState({
     name: false,
@@ -40,10 +43,23 @@ export default function EntityForm() {
 
   // Handle file upload
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFormData({ ...formData, image: URL.createObjectURL(file) });
+    const files = event.target.files;
+    if (files.length > 0) {
+      const imageArray = [...formData.images]; // Preserve existing images
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          imageArray.push(reader.result);
+          setFormData({ ...formData, images: imageArray });
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  };
+
+  const removeImage = (index) => {
+    const updatedImages = formData.images.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: updatedImages });
   };
 
   // Handle form submission
@@ -67,18 +83,24 @@ export default function EntityForm() {
       return;
     }
 
-    // Add the new entity to the global state
-    addEntity(formData);
+    if (isEditing) {
+      editEntity({ id: initialData.id, ...formData });
+    } else {
+      addEntity(formData);
+    }
 
     // Reset the form after submission
-    setFormData({
-      name: "",
-      category: "",
-      condition: "",
-      description: "",
-      price: "",
-      image: null,
-    });
+    if (!isEditing) {
+      setFormData({
+        name: "",
+        category: "",
+        condition: "",
+        description: "",
+        price: "",
+        images: [],
+      });
+    }
+    if (onSubmit) onSubmit();
   };
 
   return (
@@ -95,7 +117,9 @@ export default function EntityForm() {
 
           <p className='upload-area__text'>Drag and Drop here</p>
           <p className='upload-area__text upload-area__text--muted'>or</p>
-          <button className='upload-area__btn'>Select file</button>
+          <button type='button' className='upload-area__btn'>
+            Select file
+          </button>
           <input
             type='file'
             ref={fileInputRef}
@@ -105,9 +129,24 @@ export default function EntityForm() {
           />
         </div>
         {/* Uploaded files */}
-        {formData.image && (
-          <img src={formData.image} alt='Preview' className='w-32 mt-2' />
-        )}
+        <div className='image-preview-grid'>
+          {formData.images.map((image, index) => (
+            <div key={index} className='image-preview-item'>
+              <img
+                src={image}
+                alt={`Preview ${index}`}
+                className='image-preview'
+              />
+              <button
+                type='button'
+                className='remove-image-btn'
+                onClick={() => removeImage(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Form Fields */}
