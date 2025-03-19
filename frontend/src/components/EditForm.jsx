@@ -26,7 +26,15 @@ import Image from "next/image";
 import "../styles/components/EditForm.css";
 import EntityForm from "./EntityForm";
 
-export default function EditForm() {
+export default function EditForm({
+  id,
+  name,
+  description,
+  price,
+  images,
+  category,
+  condition,
+}) {
   const [open, setOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({
     name: true,
@@ -68,7 +76,18 @@ export default function EditForm() {
           <hr />
 
           <div className='content'>
-            <EntityForm />
+            <EntityForm
+              initialData={{
+                id,
+                name,
+                description,
+                price,
+                images,
+                category,
+                condition,
+              }}
+              onSubmit={() => setOpen(false)}
+            />
           </div>
 
           <div className='footer'>

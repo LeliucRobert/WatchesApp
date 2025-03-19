@@ -3,6 +3,7 @@
 import React from "react";
 import "../styles/components/WatchCard.css";
 import EditForm from "./EditForm";
+import { useState } from "react";
 import {
   Search,
   ChevronDown,
@@ -11,6 +12,8 @@ import {
   ArrowRight,
   Cat,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -24,6 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useEntities } from "@/context/EntityContext";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 export default function WatchCard({
   mode,
@@ -31,19 +35,95 @@ export default function WatchCard({
   name,
   description,
   price,
-  image,
+  images = [],
   seller,
+  category,
+  condition,
 }) {
+  const [showMore, setShowMore] = useState(false);
   const { deleteEntity } = useEntities();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Function to go to the next image
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  // Function to go to the previous image
+  const prevImage = () => {
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+    );
+  };
+
+  useEffect(() => {
+    if (images.length > 1 && isHovered) {
+      const interval = setInterval(() => {
+        nextImage();
+      }, 2000); // Change image every 3 seconds
+
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [images.length, currentImageIndex, isHovered]);
   return (
-    <div className='listing-card'>
+    <div
+      className='listing-card'
+      onMouseEnter={() => setIsHovered(true)} // Pause on hover
+      onMouseLeave={() => setIsHovered(false)} // Resume on leave
+    >
       <div className='listing-card__image'>
-        <img src={image || "/images/test.jpg"} alt='Watch listing' />
+        {images.length > 0 ? (
+          <>
+            <img
+              src={images[currentImageIndex]}
+              alt={`Watch ${currentImageIndex}`}
+              className='listing-card__carousel-image'
+            />
+
+            {/* Show navigation buttons only if more than 1 image */}
+            {images.length > 1 && (
+              <>
+                <button onClick={prevImage} className='carousel-prev'>
+                  <ChevronLeft />
+                </button>
+                <button onClick={nextImage} className='carousel-next'>
+                  <ChevronRight />
+                </button>
+              </>
+            )}
+          </>
+        ) : (
+          <img src='/images/test.jpg' alt='Default Watch' />
+        )}
       </div>
       <div className='listing-card__content'>
         <p className='listing-card__text'>{name || "Name"}</p>
+        <p className='listing-card__category'>
+          Category: {category || "Uncategorized"}
+        </p>
         <p className='listing-card__price'>{price ? `$${price}` : "$0"}</p>
         <p className='listing-card__seller'>Seller: {seller || "Unknown"}</p>
+
+        {showMore && (
+          <div className='listing-card__more-details'>
+            <p className='listing-card__description'>
+              <strong>Description:</strong>{" "}
+              {description || "No description available."}
+            </p>
+            <p className='listing-card__condition'>
+              <strong>Condition:</strong> {condition || "Unknown"}
+            </p>
+          </div>
+        )}
+
+        {/* View More Button */}
+        <button
+          onClick={() => setShowMore(!showMore)}
+          className='listing-card__view-more'
+        >
+          {showMore ? "View Less ▲" : "View More ▼"}
+        </button>
 
         <div className='listing-card__actions'>
           {mode === "selling" && (
@@ -61,7 +141,15 @@ export default function WatchCard({
 
           {mode === "editing" && (
             <>
-              <EditForm />
+              <EditForm
+                id={id}
+                name={name}
+                description={description}
+                price={price}
+                images={images}
+                category={category}
+                condition={condition}
+              />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <button className='listing-card__delete'>
