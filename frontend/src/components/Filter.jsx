@@ -17,11 +17,22 @@ import { Button } from "@/components/ui/button";
 import { Search, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-export default function Filter() {
-  const [selectedPrice, setSelectedPrice] = useState("All Prices");
+export default function Filter({ onFilterChange }) {
+  const [filters, setFilters] = useState({
+    searchTerm: "",
+    price: "All Prices",
+    sort: "Featured",
+  });
 
-  // Sort filter state
-  const [selectedSort, setSelectedSort] = useState("Featured");
+  // **Instantly update and apply filters**
+  const handleFilterChange = (filterType, value) => {
+    setFilters((prevFilters) => {
+      const updatedFilters = { ...prevFilters, [filterType]: value };
+      onFilterChange(updatedFilters); // Pass the latest filters
+      return updatedFilters;
+    });
+  };
+
   return (
     <div className='filters'>
       <div className='search-container'>
@@ -29,6 +40,8 @@ export default function Filter() {
           type='text'
           placeholder='Search in site'
           className='search-input'
+          value={filters.searchTerm}
+          onChange={(e) => handleFilterChange("searchTerm", e.target.value)}
         />
         <Search className='search-icon' />
       </div>
@@ -38,66 +51,31 @@ export default function Filter() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className='dropdown-button' variant='outline'>
-              <span>Price Range: {selectedPrice}</span>
+              <span>Price Range: {filters.price}</span>
               <ChevronDown className='dropdown-icon' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dropdown-content'>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedPrice === "All Prices" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedPrice("All Prices")}
-            >
-              All Prices
-              {selectedPrice === "All Prices" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedPrice === "Under $50" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedPrice("Under $50")}
-            >
-              Under $50
-              {selectedPrice === "Under $50" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedPrice === "$50 - $100" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedPrice("$50 - $100")}
-            >
-              $50 - $100
-              {selectedPrice === "$50 - $100" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedPrice === "$100 - $200" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedPrice("$100 - $200")}
-            >
-              $100 - $200
-              {selectedPrice === "$100 - $200" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedPrice === "Over $200" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedPrice("Over $200")}
-            >
-              Over $200
-              {selectedPrice === "Over $200" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
+            {[
+              "All Prices",
+              "< $50",
+              "$50 - $249",
+              "$250 - $499",
+              "$500 - $999",
+              "$1000 - 4999$",
+              "> $4999",
+            ].map((price) => (
+              <DropdownMenuItem
+                key={price}
+                className={`dropdown-item ${
+                  filters.price === price ? "selected" : ""
+                }`}
+                onClick={() => handleFilterChange("price", price)}
+              >
+                {price}{" "}
+                {filters.price === price && <Check className='check-icon' />}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -105,62 +83,28 @@ export default function Filter() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className='dropdown-button' variant='outline'>
-              <span>Sort By: {selectedSort}</span>
+              <span>Sort By: {filters.sort}</span>
               <ChevronDown className='dropdown-icon' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className='dropdown-content'>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedSort === "Featured" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedSort("Featured")}
-            >
-              Featured
-              {selectedSort === "Featured" && <Check className='check-icon' />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedSort === "Price: Low to High" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedSort("Price: Low to High")}
-            >
-              Price: Low to High
-              {selectedSort === "Price: Low to High" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedSort === "Price: High to Low" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedSort("Price: High to Low")}
-            >
-              Price: High to Low
-              {selectedSort === "Price: High to Low" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedSort === "Newest" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedSort("Newest")}
-            >
-              Newest
-              {selectedSort === "Newest" && <Check className='check-icon' />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={`dropdown-item ${
-                selectedSort === "Best Selling" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedSort("Best Selling")}
-            >
-              Best Selling
-              {selectedSort === "Best Selling" && (
-                <Check className='check-icon' />
-              )}
-            </DropdownMenuItem>
+            {[
+              "Featured",
+              "Price: Low to High",
+              "Price: High to Low",
+              "Newest",
+            ].map((sort) => (
+              <DropdownMenuItem
+                key={sort}
+                className={`dropdown-item ${
+                  filters.sort === sort ? "selected" : ""
+                }`}
+                onClick={() => handleFilterChange("sort", sort)}
+              >
+                {sort}{" "}
+                {filters.sort === sort && <Check className='check-icon' />}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
