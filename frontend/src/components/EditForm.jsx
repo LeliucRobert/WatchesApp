@@ -90,9 +90,7 @@ export default function EditForm({
             />
           </div>
 
-          <div className='footer'>
-            <Button className='confirm-btn'>Confirm changes</Button>
-          </div>
+          <div className='footer'></div>
         </div>
       </DialogContent>
     </Dialog>
