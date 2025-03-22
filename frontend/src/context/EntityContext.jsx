@@ -1,9 +1,8 @@
 /** @format */
 
 "use client";
-
-import { createContext, useState, useContext } from "react";
-
+import { createContext, useState, useContext, useEffect } from "react";
+import { generateFakeWatches } from "@/utils/FakeData";
 // Create context
 const EntityContext = createContext();
 
@@ -35,6 +34,11 @@ export const EntityProvider = ({ children }) => {
       )
     );
   };
+
+  useEffect(() => {
+    const fakeWatches = generateFakeWatches(20);
+    setEntities(fakeWatches);
+  }, []);
 
   return (
     <EntityContext.Provider

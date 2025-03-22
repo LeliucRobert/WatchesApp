@@ -70,6 +70,17 @@ export default function Home() {
   console.log("Original Entities:", entities);
   console.log("Filtered Watches:", filteredWatches);
 
+  const itemsPerPage = 8;
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(filteredWatches.length / itemsPerPage);
+
+  const currentWatches = filteredWatches.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     // <div className='container'>
     // {/* Header */}
@@ -95,16 +106,29 @@ export default function Home() {
         <h2 className='section-title'>Browse watches</h2>
 
         <div className='category-grid'>
-          {/* Men Watches */}
-          <Category />
-          {/* Women Watches 1 */}
-          <Category />
+          <Category
+            Name='Luxury Watches'
+            Description='Top-tier timepieces crafted with elegance'
+            ImageURL='/images/luxury.png'
+          />
 
-          {/* Women Watches 2 */}
-          <Category />
+          <Category
+            Name='Vintage Watches'
+            Description='Durable and stylish watches for active lifestyles'
+            ImageURL='/images/vintage.png'
+          />
 
-          {/* Women Watches 3 */}
-          <Category />
+          <Category
+            Name='Casual Watches'
+            Description='Everyday comfort with timeless design'
+            ImageURL='/images/casual.png'
+          />
+
+          <Category
+            Name=' SmartWatches'
+            Description='Classic heritage styles that never go out of fashion'
+            ImageURL='/images/smartwatch.png'
+          />
         </div>
       </section>
 
@@ -116,16 +140,11 @@ export default function Home() {
         <Filter onFilterChange={handleFilterChange} />
         <hr></hr>
         {/* Products Grid - First Row */}
-        <div className='product-grid'>
-          {[1, 2, 3, 4].map((item) => (
-            <WatchCard key={`product-${item}`} mode='selling' />
-          ))}
-        </div>
 
         {/* Products Grid - Second Row */}
-        {filteredWatches.length > 0 ? (
+        {currentWatches.length > 0 ? (
           <div className='product-grid'>
-            {filteredWatches.map((watch) => (
+            {currentWatches.map((watch) => (
               <WatchCard
                 key={watch.id}
                 mode='selling'
@@ -144,6 +163,11 @@ export default function Home() {
         )}
 
         {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </section>
     </div>
     // <Pagination />
