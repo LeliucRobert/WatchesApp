@@ -66,9 +66,6 @@ export default function Home() {
   } else if (filters.sort === "Newest") {
     filteredWatches.sort((a, b) => b.id - a.id);
   }
-  console.log("Selected Filters:", filters);
-  console.log("Original Entities:", entities);
-  console.log("Filtered Watches:", filteredWatches);
 
   const itemsPerPage = 8;
 
