@@ -14,7 +14,7 @@ import {
   Twitter,
 } from "lucide-react";
 import "../styles/main.css";
-
+import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <div className='main'>
@@ -142,6 +142,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

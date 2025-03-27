@@ -15,7 +15,8 @@ import * as React from "react";
 import EditForm from "@/components/EditForm";
 import EntityForm from "@/components/EntityForm";
 import WatchCard from "@/components/WatchCard";
-
+import WatchStatsDashboard from "@/components/WatchStatsDashboard";
+import Footer from "@/components/Footer";
 export default function WatchlyUI() {
   const { entities } = useEntities();
   return (
@@ -29,7 +30,10 @@ export default function WatchlyUI() {
         </div>
       </section>
       {/* Active Listings */}
-      <section className='listings'>
+      <section
+        className='listings'
+        style={{ marginBottom: "4rem" }} // adds large spacing after section
+      >
         <h2 className='listings__title'>Active Listings</h2>
         {entities.length > 0 ? (
           <Carousel>
@@ -44,7 +48,7 @@ export default function WatchlyUI() {
                     price={watch.price}
                     images={watch.images}
                     category={watch.category}
-                    condition={watch.condition} // Ensure WatchCard supports this prop
+                    condition={watch.condition}
                   />
                 </CarouselItem>
               ))}
@@ -58,6 +62,12 @@ export default function WatchlyUI() {
           </p>
         )}
       </section>
+
+      <div style={{ marginBottom: "4rem" }}>
+        <WatchStatsDashboard />
+      </div>
+
+      <Footer />
     </div>
   );
 }
