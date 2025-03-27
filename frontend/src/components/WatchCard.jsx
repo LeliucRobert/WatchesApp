@@ -39,11 +39,26 @@ export default function WatchCard({
   seller,
   category,
   condition,
+  statisticsEnabled = false,
+  minPrice,
+  maxPrice,
 }) {
   const [showMore, setShowMore] = useState(false);
   const { deleteEntity } = useEntities();
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image
   const [isHovered, setIsHovered] = useState(false);
+
+  function getPriceColor(price, min, max) {
+    if (max === min) return "hsl(120, 100%, 40%)"; // Avoid division by 0
+    const ratio = (price - min) / (max - min); // Range between 0 and 1
+    const hue = 120 - ratio * 120; // 120 = green, 0 = red
+    return `hsl(${hue}, 100%, 40%)`; // returns HSL color string
+  }
+
+  const numericPrice = parseFloat(price.toString().replace(/[^\d.]/g, ""));
+  const priceColor = statisticsEnabled
+    ? getPriceColor(numericPrice, minPrice, maxPrice)
+    : "inherit";
 
   // Function to go to the next image
   const nextImage = () => {
@@ -102,7 +117,9 @@ export default function WatchCard({
         <p className='listing-card__category'>
           Category: {category || "Uncategorized"}
         </p>
-        <p className='listing-card__price'>{price ? `$${price}` : "$0"}</p>
+        <p className='listing-card__price' style={{ color: priceColor }}>
+          {price ? `$${price}` : "$0"}
+        </p>
         <p className='listing-card__seller'>Seller: {seller || "Unknown"}</p>
 
         {showMore && (

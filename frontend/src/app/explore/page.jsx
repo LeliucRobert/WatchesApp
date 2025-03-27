@@ -20,6 +20,7 @@ import WatchCard from "@/components/WatchCard";
 import { useEntities } from "@/context/EntityContext";
 import { useState } from "react";
 export default function Home() {
+  const [statisticsEnabled, setStatisticsEnabled] = useState(false);
   const { entities } = useEntities();
   const [filters, setFilters] = useState({
     searchTerm: "",
@@ -78,6 +79,18 @@ export default function Home() {
     currentPage * itemsPerPage
   );
 
+  const prices = filteredWatches.map(
+    (w) =>
+      parseFloat(
+        w.price
+          .toString()
+          .replace(/[^\d.]/g, "")
+          .trim()
+      ) || 0
+  );
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+
   return (
     // <div className='container'>
     // {/* Header */}
@@ -134,7 +147,11 @@ export default function Home() {
         <h2 className='section-title'>Featured</h2>
 
         {/* Filters */}
-        <Filter onFilterChange={handleFilterChange} />
+        <Filter
+          onFilterChange={handleFilterChange}
+          showStats={statisticsEnabled}
+          onToggleStats={() => setStatisticsEnabled((prev) => !prev)}
+        />
         <hr></hr>
         {/* Products Grid - First Row */}
 
@@ -152,6 +169,9 @@ export default function Home() {
                 description={watch.description}
                 category={watch.category}
                 condition={watch.condition}
+                statisticsEnabled={statisticsEnabled}
+                minPrice={minPrice}
+                maxPrice={maxPrice}
               />
             ))}
           </div>

@@ -65,21 +65,26 @@ export default function EntityForm({ initialData, onSubmit }) {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    const isValidPrice = parseFloat(formData.price) > 0;
     // Validate form before submission
     if (
       !formData.name ||
       !formData.category ||
       !formData.condition ||
-      !formData.price
+      !formData.price ||
+      !isValidPrice
     ) {
       setFormErrors({
         name: !formData.name,
         category: !formData.category,
         condition: !formData.condition,
-        price: !formData.price,
+        price: !formData.price || !isValidPrice,
       });
-      alert("Please fill in all required fields.");
+      alert(
+        !isValidPrice
+          ? "Please enter a valid positive price."
+          : "Please fill in all required fields."
+      );
       return;
     }
 
@@ -89,7 +94,6 @@ export default function EntityForm({ initialData, onSubmit }) {
       addEntity(formData);
     }
 
-    // Reset the form after submission
     if (!isEditing) {
       setFormData({
         name: "",
@@ -100,6 +104,7 @@ export default function EntityForm({ initialData, onSubmit }) {
         images: [],
       });
     }
+
     if (onSubmit) onSubmit();
   };
 
