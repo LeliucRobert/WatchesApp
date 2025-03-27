@@ -363,6 +363,83 @@
   }
 }
 
+/* NEW wrapper to align stats toggle to the right */
+.stats-toggle-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 30;
+  margin-top: -16px;
+}
+
+/* Price Statistics Toggle Wrapper */
+.stats-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-left: 4px;
+}
+
+/* Label text */
+.stats-toggle-label {
+  font-size: 14px;
+  color: #374151; /* gray-700 */
+  font-weight: 500;
+}
+
+/* Switch styles */
+.switch-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.switch-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db; /* gray-300 */
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.sort-and-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* spacing between sort and toggle */
+}
+
+/* Checked State */
+.switch-checkbox:checked + .switch-slider {
+  background-color: #10b981; /* green-500 */
+}
+
+.switch-checkbox:checked + .switch-slider::before {
+  transform: translateX(20px);
+}
+
 .category-grid {
   display: grid;
   grid-template-columns: 1fr;
