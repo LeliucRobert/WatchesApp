@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Search,
   ChevronDown,
+  ChevronUp,
   Heart,
   ShoppingCart,
   ArrowRight,
@@ -19,7 +20,10 @@ import Filter from "@/components/Filter";
 import WatchCard from "@/components/WatchCard";
 import { useEntities } from "@/context/EntityContext";
 import { useState } from "react";
+import WatchStatsDashboard from "@/components/WatchStatsDashboard";
+
 export default function Home() {
+  const [showCharts, setShowCharts] = useState(false); // New state
   const [statisticsEnabled, setStatisticsEnabled] = useState(false);
   const { entities } = useEntities();
   const [filters, setFilters] = useState({
@@ -152,6 +156,36 @@ export default function Home() {
           showStats={statisticsEnabled}
           onToggleStats={() => setStatisticsEnabled((prev) => !prev)}
         />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            margin: "1rem 0",
+          }}
+        >
+          <button
+            onClick={() => setShowCharts((prev) => !prev)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.3rem",
+              background: "none",
+              border: "none",
+              padding: 0,
+              fontWeight: "normal",
+              fontSize: "0.9rem",
+              color: "#000",
+              cursor: "pointer",
+            }}
+          >
+            More Analysis{" "}
+            {showCharts ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+        </div>
+
+        {/* 📈 Watch Charts */}
+        {showCharts && <WatchStatsDashboard />}
+
         <hr></hr>
         {/* Products Grid - First Row */}
 
@@ -186,10 +220,9 @@ export default function Home() {
           onPageChange={(page) => setCurrentPage(page)}
         />
       </section>
+      <Footer />
     </div>
     // <Pagination />
     // {/* Footer */}
-    // {/* <Footer /> */}
-    // </div>
   );
 }
