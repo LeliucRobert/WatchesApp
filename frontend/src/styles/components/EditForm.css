@@ -94,6 +94,7 @@ hr {
 @media (min-width: 768px) {
   .content {
     grid-template-columns: 1fr 1fr;
+    margin-bottom: 20px;
   }
 }
 
@@ -186,13 +187,6 @@ hr {
 /* Select wrapper */
 .select-wrapper {
   width: 100%;
-}
-
-/* Footer */
-.footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
 }
 
 .confirm-btn {

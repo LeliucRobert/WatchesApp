@@ -38,18 +38,18 @@ export default function Home() {
       </section>
 
       {/* Banner Image */}
-      <section className='banner-section'>
+      {/* <section className='banner-section'>
         <div className='banner-container'>
           <div className='banner-image-wrapper'>
             <Image
-              src='/placeholder.svg?height=300&width=1200'
+              src='/images/Banner.png'
               alt='Luxury watch'
               fill
               className='banner-image'
             />
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Buy a Watch Section */}
       <section className='buy-section'>
@@ -64,8 +64,8 @@ export default function Home() {
             <div className='testimonials'>
               <div className='testimonial-card'>
                 <div className='testimonial-header'>
-                  <div className='testimonial-avatar'></div>
-                  <span className='testimonial-name'>Sarah</span>
+                  {/* <div className='testimonial-avatar'></div> */}
+                  <span className='testimonial-name'>Gabriel M. </span>
                 </div>
                 <div className='testimonial-rating'>★★★★★</div>
                 <p className='testimonial-text'>
@@ -74,8 +74,8 @@ export default function Home() {
               </div>
               <div className='testimonial-card'>
                 <div className='testimonial-header'>
-                  <div className='testimonial-avatar'></div>
-                  <span className='testimonial-name'>Mike</span>
+                  {/* <div className='testimonial-avatar'></div> */}
+                  <span className='testimonial-name'>Alex C. </span>
                 </div>
                 <div className='testimonial-rating'>★★★★★</div>
                 <p className='testimonial-text'>Very happy with my purchase</p>
@@ -83,7 +83,7 @@ export default function Home() {
             </div>
             <Link href='/explore'>
               <Button variant='outline' className='button button-primary'>
-                Sell your watch
+                Explore watches
               </Button>
             </Link>
           </div>
@@ -98,18 +98,20 @@ export default function Home() {
             <p className='section-description'>
               Put your watch up for sale now
             </p>
+            <Link href='/explore'>
+              <div className='selling-option'>
+                <div className='selling-icon'>
+                  <span>💰</span>
+                </div>
 
-            <div className='selling-option'>
-              <div className='selling-icon'>
-                <span>💰</span>
+                <div className='selling-details'>
+                  <h3 className='selling-option-title'>Sell Your Watch</h3>
+                  <p className='selling-option-description'>
+                    Earn money by selling your watch
+                  </p>
+                </div>
               </div>
-              <div className='selling-details'>
-                <h3 className='selling-option-title'>Sell Your Watch</h3>
-                <p className='selling-option-description'>
-                  Earn money by selling your watch
-                </p>
-              </div>
-            </div>
+            </Link>
           </div>
           <div className='selling-image-placeholder'></div>
         </div>
