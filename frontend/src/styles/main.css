@@ -73,18 +73,24 @@
 }
 
 .hero-image-placeholder {
-  background-color: #f3f3f3;
-  aspect-ratio: 4 / 3;
-  width: 100%;
+  background-image: url("/images/hero.png");
+  background-size: cover;
+  background-position: center;
+  width: 600px;
+  height: 400px;
+  border-radius: 12px;
+  margin-bottom: 70px;
 }
 
 /* Banner Section */
 .banner-section {
   padding: 24px 0;
+  margin-top: 70px;
+  margin-bottom: 70px;
 }
 
 .banner-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 16px;
 }
@@ -93,7 +99,7 @@
   position: relative;
   width: 100%;
   height: 180px;
-  border-radius: 8px;
+  border-radius: 28px;
   overflow: hidden;
 }
 
@@ -119,7 +125,7 @@
   margin: 0 auto;
   padding: 0 16px;
   display: grid;
-  gap: 32px;
+  gap: 82px;
 }
 
 @media (min-width: 768px) {
@@ -130,10 +136,14 @@
 }
 
 .buy-image-placeholder {
-  background-color: #f3f3f3;
-  aspect-ratio: 4 / 3;
-  width: 100%;
-  order: 1;
+  background-image: url("/images/buywatch.png");
+  background-size: cover;
+  background-position: center;
+  width: 600px;
+  height: 400px;
+  border-radius: 12px;
+  margin-bottom: 100px;
+  margin-top: 100px;
 }
 
 .buy-content {
@@ -259,9 +269,14 @@
 }
 
 .selling-image-placeholder {
-  background-color: #f3f3f3;
-  aspect-ratio: 4 / 3;
-  width: 100%;
+  background-image: url("/images/sellwatch.png");
+  background-size: cover;
+  background-position: center;
+  width: 600px;
+  height: 400px;
+  border-radius: 12px;
+  margin-bottom: 100px;
+  margin-top: 100px;
 }
 
 /* Latest Watches Section */
