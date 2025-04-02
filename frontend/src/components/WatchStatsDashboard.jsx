@@ -134,8 +134,11 @@ export default function WatchStatsDashboard() {
         </div>
 
         {/* Bar Chart */}
-        <div style={{ flex: 1, minWidth: "300px", height: 400 }}>
-          <h3>🏷️ Top Sellers by Listings</h3>
+        <div
+          style={{ flex: 1, minWidth: "300px", height: 400 }}
+          aria-labe='bar-chart-div'
+        >
+          <h3 aria-label='bar-chart-title'>🏷️ Top Sellers by Listings</h3>
           <ResponsiveContainer width='100%' height='85%'>
             <BarChart data={sellerData}>
               <CartesianGrid strokeDasharray='3 3' />
