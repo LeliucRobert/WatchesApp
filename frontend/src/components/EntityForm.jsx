@@ -10,9 +10,6 @@ import "../styles/components/EntityForm.css";
 export default function EntityForm({ initialData, onSubmit }) {
   const fileInputRef = useRef(null);
 
-  const handleClick = () => {
-    fileInputRef.current.click(); // Triggers file input
-  };
   const { addEntity, editEntity } = useEntities();
 
   const isEditing = Boolean(initialData); // Check if editing or adding
@@ -80,11 +77,7 @@ export default function EntityForm({ initialData, onSubmit }) {
         condition: !formData.condition,
         price: !formData.price || !isValidPrice,
       });
-      alert(
-        !isValidPrice
-          ? "Please enter a valid positive price."
-          : "Please fill in all required fields."
-      );
+
       return;
     }
 
@@ -128,6 +121,7 @@ export default function EntityForm({ initialData, onSubmit }) {
           <input
             type='file'
             ref={fileInputRef}
+            aria-label='Select file input'
             accept='image/png, image/jpeg'
             style={{ display: "none" }}
             onChange={handleFileChange}
@@ -173,9 +167,12 @@ export default function EntityForm({ initialData, onSubmit }) {
 
         {/* Category */}
         <div className='form-group'>
-          <label className='form-label'>Category</label>
+          <label htmlFor='category' className='form-label'>
+            Category
+          </label>
           <div className='form-select'>
             <select
+              id='category'
               name='category'
               value={formData.category}
               onChange={handleChange}
@@ -197,9 +194,12 @@ export default function EntityForm({ initialData, onSubmit }) {
 
         {/* Condition */}
         <div className='form-group'>
-          <label className='form-label'>Condition</label>
+          <label htmlFor='condition' className='form-label'>
+            Condition
+          </label>
           <div className='form-select'>
             <select
+              id='condition'
               name='condition'
               value={formData.condition}
               onChange={handleChange}

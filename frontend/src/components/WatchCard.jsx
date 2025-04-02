@@ -99,10 +99,18 @@ export default function WatchCard({
             {/* Show navigation buttons only if more than 1 image */}
             {images.length > 1 && (
               <>
-                <button onClick={prevImage} className='carousel-prev'>
+                <button
+                  onClick={prevImage}
+                  className='carousel-prev'
+                  aria-label='Previous Image'
+                >
                   <ChevronLeft />
                 </button>
-                <button onClick={nextImage} className='carousel-next'>
+                <button
+                  onClick={nextImage}
+                  className='carousel-next'
+                  aria-label='Next Image'
+                >
                   <ChevronRight />
                 </button>
               </>
@@ -150,7 +158,7 @@ export default function WatchCard({
                 ADD TO CART
                 <ArrowRight className='arrow-icon' />
               </button>
-              <button className='favorite-button'>
+              <button className='favorite-button' aria-label='Favorite Watch'>
                 <Heart className='heart-icon' />
               </button>
             </>
@@ -169,7 +177,10 @@ export default function WatchCard({
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <button className='listing-card__delete'>
+                  <button
+                    className='listing-card__delete'
+                    aria-label='Delete Listing'
+                  >
                     <Trash2 className='trash2-icon' />
                   </button>
                 </AlertDialogTrigger>
