@@ -17,6 +17,7 @@ import EntityForm from "@/components/EntityForm";
 import WatchCard from "@/components/WatchCard";
 import WatchStatsDashboard from "@/components/WatchStatsDashboard";
 import Footer from "@/components/Footer";
+import GenerateFakeButton from "@/components/GenerateFakeButton";
 export default function WatchlyUI() {
   const { entities } = useEntities();
   return (
@@ -62,6 +63,7 @@ export default function WatchlyUI() {
           </p>
         )}
       </section>
+      <GenerateFakeButton />
 
       <div style={{ marginBottom: "4rem" }}>
         <WatchStatsDashboard />
