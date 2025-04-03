@@ -47,17 +47,17 @@ export const useEntities = () => useContext(EntityContext);
 //   }, []);
 export const EntityProvider = ({ children }) => {
   const [entities, setEntities] = useState([]);
-
+  const loadEntities = async () => {
+    try {
+      const data = await fetchWatches();
+      setEntities(data);
+    } catch (error) {
+      console.error("Failed to fetch watches:", error);
+    }
+  };
   // Load from backend
   useEffect(() => {
-    const loadEntities = async () => {
-      try {
-        const data = await fetchWatches();
-        setEntities(data);
-      } catch (error) {
-        console.error("Failed to fetch watches:", error);
-      }
-    };
+    console.log(entities);
 
     loadEntities();
   }, []);
@@ -66,6 +66,7 @@ export const EntityProvider = ({ children }) => {
     try {
       const created = await createWatch(newEntity);
       setEntities((prev) => [...prev, created]);
+      await loadEntities();
     } catch (error) {
       console.error("Failed to create watch:", error);
     }

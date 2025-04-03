@@ -23,4 +23,12 @@ class Watch(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.category})"
+
+class WatchFile(models.Model):
+    watch = models.ForeignKey(Watch, related_name="media", on_delete=models.CASCADE)
+    file = models.FileField(upload_to='watch_media/')
+    file_type = models.CharField(max_length=10, choices=[('image', 'Image'), ('video', 'Video')])
+
+    def __str__(self):
+        return f"{self.watch.name} - {self.file_type}"

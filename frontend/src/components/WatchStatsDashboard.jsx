@@ -28,15 +28,13 @@ export default function WatchStatsDashboard() {
   const [categoryData, setCategoryData] = useState([]);
   const [sellerData, setSellerData] = useState([]);
 
-  // Calculate total price
   const getTotalPrice = () => {
-    return entities.reduce(
-      (acc, watch) => acc + parseFloat(watch.price || 0),
-      0
-    );
+    return entities.reduce((acc, watch) => {
+      const price = parseFloat(watch?.price);
+      return acc + (isNaN(price) ? 0 : price);
+    }, 0);
   };
 
-  // Update chart data in real-time
   useEffect(() => {
     const now = new Date();
     const timestamp = now.toLocaleTimeString();
@@ -49,7 +47,7 @@ export default function WatchStatsDashboard() {
     // Pie Chart (by category)
     const categoryMap = {};
     entities.forEach((watch) => {
-      const category = watch.category || "Unknown";
+      const category = watch?.category || "Unknown";
       categoryMap[category] = (categoryMap[category] || 0) + 1;
     });
     setCategoryData(
@@ -59,7 +57,7 @@ export default function WatchStatsDashboard() {
     // Bar Chart (by seller)
     const sellerMap = {};
     entities.forEach((watch) => {
-      const seller = watch.seller?.name || watch.seller || "Unknown";
+      const seller = watch?.seller?.name || watch?.seller || "Unknown";
       sellerMap[seller] = (sellerMap[seller] || 0) + 1;
     });
     const sortedSellers = Object.entries(sellerMap)
@@ -78,7 +76,6 @@ export default function WatchStatsDashboard() {
         📈 Watch Market Analytics
       </h2>
 
-      {/* Flex Row Container */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
         {/* Area Chart */}
         <div style={{ flex: 1, minWidth: "300px", height: 400 }}>
@@ -136,7 +133,7 @@ export default function WatchStatsDashboard() {
         {/* Bar Chart */}
         <div
           style={{ flex: 1, minWidth: "300px", height: 400 }}
-          aria-labe='bar-chart-div'
+          aria-label='bar-chart-div'
         >
           <h3 aria-label='bar-chart-title'>🏷️ Top Sellers by Listings</h3>
           <ResponsiveContainer width='100%' height='85%'>

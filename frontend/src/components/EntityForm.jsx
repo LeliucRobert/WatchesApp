@@ -20,7 +20,7 @@ export default function EntityForm({ initialData, onSubmit }) {
       condition: "",
       description: "",
       price: "",
-      images: [],
+      media: [],
     }
   );
 
@@ -39,24 +39,37 @@ export default function EntityForm({ initialData, onSubmit }) {
   };
 
   // Handle file upload
+  // const handleFileChange = (event) => {
+  //   const files = event.target.files;
+  //   if (files.length > 0) {
+  //     const imageArray = [...formData.images]; // Preserve existing images
+  //     Array.from(files).forEach((file) => {
+  //       const reader = new FileReader();
+  //       reader.onloadend = () => {
+  //         imageArray.push(reader.result);
+  //         setFormData({ ...formData, images: imageArray });
+  //       };
+  //       reader.readAsDataURL(file);
+  //     });
+  //   }
+  // };
+
   const handleFileChange = (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-      const imageArray = [...formData.images]; // Preserve existing images
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          imageArray.push(reader.result);
-          setFormData({ ...formData, images: imageArray });
-        };
-        reader.readAsDataURL(file);
-      });
-    }
+    const files = Array.from(event.target.files);
+    setFormData((prev) => ({
+      ...prev,
+      media: [...prev.media, ...files], // store actual File objects
+    }));
   };
 
+  // const removeImage = (index) => {
+  //   const updatedImages = formData.images.filter((_, i) => i !== index);
+  //   setFormData({ ...formData, images: updatedImages });
+  // };
+
   const removeImage = (index) => {
-    const updatedImages = formData.images.filter((_, i) => i !== index);
-    setFormData({ ...formData, images: updatedImages });
+    const updatedMedia = formData.media.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, media: updatedMedia }));
   };
 
   // Handle form submission
@@ -81,10 +94,39 @@ export default function EntityForm({ initialData, onSubmit }) {
       return;
     }
 
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("category", formData.category);
+    data.append("condition", formData.condition);
+    data.append("description", formData.description);
+    data.append("price", formData.price);
+    data.append("seller", "John Doe");
+
+    formData.media.forEach((file) => {
+      data.append("media", file);
+    });
+
+    // const dataToSend = {
+    //   name: formData.name,
+    //   category: formData.category,
+    //   condition: formData.condition,
+    //   description: formData.description,
+    //   price: formData.price,
+    //   seller: "John Doe", // Replace with dynamic seller if available
+    //   media: formData.media.map((img) => ({
+    //     file: img,
+    //     file_type: "image", // Currently only images, add logic if videos
+    //   })),
+    // };
+    console.log(formData);
+    console.log(data);
+    // console.log(dataToSend);
     if (isEditing) {
       editEntity({ id: initialData.id, ...formData });
     } else {
-      addEntity(formData);
+      // addEntity(dataToSend);
+      addEntity(data);
+      // addEntity(formData);
     }
 
     if (!isEditing) {
@@ -94,7 +136,7 @@ export default function EntityForm({ initialData, onSubmit }) {
         condition: "",
         description: "",
         price: "",
-        images: [],
+        media: [],
       });
     }
 
@@ -122,17 +164,17 @@ export default function EntityForm({ initialData, onSubmit }) {
             type='file'
             ref={fileInputRef}
             aria-label='Select file input'
-            accept='image/png, image/jpeg'
+            accept='image/*,video/*'
             style={{ display: "none" }}
             onChange={handleFileChange}
           />
         </div>
         {/* Uploaded files */}
         <div className='image-preview-grid'>
-          {formData.images.map((image, index) => (
+          {formData.media.map((file, index) => (
             <div key={index} className='image-preview-item'>
               <img
-                src={image}
+                src={URL.createObjectURL(file)}
                 alt={`Preview ${index}`}
                 className='image-preview'
               />
@@ -182,8 +224,9 @@ export default function EntityForm({ initialData, onSubmit }) {
             >
               <option value=''>Select a category...</option>
               <option value='luxury'>Luxury</option>
-              <option value='sport'>Sport</option>
+              <option value='vintage'>Vintage</option>
               <option value='casual'>Casual</option>
+              <option value='smartwatch'>SmartWatch</option>
             </select>
             <ChevronDown className='form-select__icon' />
           </div>
@@ -209,9 +252,7 @@ export default function EntityForm({ initialData, onSubmit }) {
             >
               <option value=''>Select a condition...</option>
               <option value='new'>New</option>
-              <option value='like-new'>Like New</option>
               <option value='used'>Used</option>
-              <option value='vintage'>Vintage</option>
             </select>
             <ChevronDown className='form-select__icon' />
           </div>
