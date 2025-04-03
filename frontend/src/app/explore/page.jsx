@@ -192,22 +192,27 @@ export default function Home() {
         {/* Products Grid - Second Row */}
         {currentWatches.length > 0 ? (
           <div className='product-grid'>
-            {currentWatches.map((watch) => (
-              <WatchCard
-                key={watch.id}
-                mode='selling'
-                name={watch.name}
-                price={watch.price}
-                images={watch.images}
-                seller={watch.seller}
-                description={watch.description}
-                category={watch.category}
-                condition={watch.condition}
-                statisticsEnabled={statisticsEnabled}
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-              />
-            ))}
+            {currentWatches.map((watch) => {
+              if (!watch || !watch.id) return null; // ✅ Prevents crash
+
+              return (
+                <WatchCard
+                  mode='selling'
+                  key={watch.id}
+                  id={watch.id}
+                  name={watch.name}
+                  description={watch.description}
+                  price={watch.price}
+                  media={watch.media}
+                  seller={watch.seller}
+                  category={watch.category}
+                  condition={watch.condition}
+                  statisticsEnabled={statisticsEnabled}
+                  minPrice={minPrice}
+                  maxPrice={maxPrice}
+                />
+              );
+            })}
           </div>
         ) : (
           <p className='no-watches'>No watches match your criteria.</p>

@@ -31,7 +31,7 @@ export default function EditForm({
   name,
   description,
   price,
-  images,
+  media,
   category,
   condition,
 }) {
@@ -82,7 +82,7 @@ export default function EditForm({
                 name,
                 description,
                 price,
-                images,
+                media,
                 category,
                 condition,
               }}

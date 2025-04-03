@@ -90,11 +90,15 @@ export default function WatchCard({
       <div className='listing-card__image'>
         {media.length > 0 ? (
           <>
-            <img
-              src={media[currentImageIndex].file}
-              alt={`Watch ${currentImageIndex}`}
-              className='listing-card__carousel-image'
-            />
+            {media[currentImageIndex].file_type === "video" ? (
+              <video src={media[currentImageIndex].file} controls muted />
+            ) : (
+              <img
+                src={media[currentImageIndex].file}
+                alt={`Watch ${currentImageIndex}`}
+                className='listing-card__carousel-image'
+              />
+            )}
 
             {/* Show navigation buttons only if more than 1 image */}
             {media.length > 1 && (
@@ -171,7 +175,7 @@ export default function WatchCard({
                 name={name}
                 description={description}
                 price={price}
-                images={media}
+                media={media}
                 category={category}
                 condition={condition}
               />
