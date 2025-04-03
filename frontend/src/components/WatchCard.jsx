@@ -35,7 +35,7 @@ export default function WatchCard({
   name,
   description,
   price,
-  images = [],
+  media = [],
   seller,
   category,
   condition,
@@ -47,7 +47,7 @@ export default function WatchCard({
   const { deleteEntity } = useEntities();
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image
   const [isHovered, setIsHovered] = useState(false);
-
+  console.log(media);
   function getPriceColor(price, min, max) {
     if (max === min) return "hsl(120, 100%, 40%)";
     const ratio = (price - min) / (max - min);
@@ -62,25 +62,25 @@ export default function WatchCard({
 
   // Function to go to the next image
   const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % media.length);
   };
 
   // Function to go to the previous image
   const prevImage = () => {
     setCurrentImageIndex(
-      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+      (prevIndex) => (prevIndex - 1 + media.length) % media.length
     );
   };
 
   useEffect(() => {
-    if (images.length > 1 && isHovered) {
+    if (media.length > 1 && isHovered) {
       const interval = setInterval(() => {
         nextImage();
       }, 2000); // Change image every 3 seconds
 
       return () => clearInterval(interval); // Cleanup interval on unmount
     }
-  }, [images.length, currentImageIndex, isHovered]);
+  }, [media.length, currentImageIndex, isHovered]);
   return (
     <div
       className='listing-card'
@@ -88,16 +88,16 @@ export default function WatchCard({
       onMouseLeave={() => setIsHovered(false)} // Resume on leave
     >
       <div className='listing-card__image'>
-        {images.length > 0 ? (
+        {media.length > 0 ? (
           <>
             <img
-              src={images[currentImageIndex]}
+              src={media[currentImageIndex].file}
               alt={`Watch ${currentImageIndex}`}
               className='listing-card__carousel-image'
             />
 
             {/* Show navigation buttons only if more than 1 image */}
-            {images.length > 1 && (
+            {media.length > 1 && (
               <>
                 <button
                   onClick={prevImage}
@@ -171,7 +171,7 @@ export default function WatchCard({
                 name={name}
                 description={description}
                 price={price}
-                images={images}
+                images={media}
                 category={category}
                 condition={condition}
               />

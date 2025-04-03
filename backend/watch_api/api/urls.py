@@ -1,7 +1,9 @@
 from django.urls import path, include
-from .views import watch
+from api import views
 
 urlpatterns = [
-    path('watch/' , watch),
-    path('watch/<int:pk>/' , watch), # URL pattern for watch with a specific ID
+    
+    path('watches/create/', views.watch_create, name='watch_create'),
+    path('watches/' , views.watch_list, name='watch_list'),
+    
 ]

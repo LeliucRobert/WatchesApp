@@ -20,6 +20,11 @@ import Footer from "@/components/Footer";
 import GenerateFakeButton from "@/components/GenerateFakeButton";
 export default function WatchlyUI() {
   const { entities } = useEntities();
+  if (entities.length > 0) {
+    // console.log(entities);
+    // console.log(entities[0]);
+    // console.log(entities[0].id);
+  }
   return (
     <div className='container'>
       {/* Sell your watch form */}
@@ -39,20 +44,24 @@ export default function WatchlyUI() {
         {entities.length > 0 ? (
           <Carousel>
             <CarouselContent className='gap-x-7'>
-              {entities.map((watch) => (
-                <CarouselItem key={watch.id} className='basis-1/3'>
-                  <WatchCard
-                    mode='editing'
-                    id={watch.id}
-                    name={watch.name}
-                    description={watch.description}
-                    price={watch.price}
-                    images={watch.images}
-                    category={watch.category}
-                    condition={watch.condition}
-                  />
-                </CarouselItem>
-              ))}
+              {entities.map((watch) => {
+                if (!watch || !watch.id) return null; // ✅ Prevents crash
+
+                return (
+                  <CarouselItem key={watch.id} className='basis-1/3'>
+                    <WatchCard
+                      mode='editing'
+                      id={watch.id}
+                      name={watch.name}
+                      description={watch.description}
+                      price={watch.price}
+                      media={watch.media}
+                      category={watch.category}
+                      condition={watch.condition}
+                    />
+                  </CarouselItem>
+                );
+              })}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
