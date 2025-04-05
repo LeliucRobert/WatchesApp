@@ -15,11 +15,13 @@ export default function EntityForm({ initialData, onSubmit }) {
   const isEditing = Boolean(initialData);
   const [formData, setFormData] = useState(
     initialData || {
+      id: `offline-${Date.now()}`,
       name: "",
       category: "",
       condition: "",
       description: "",
       price: "",
+      seller: "John Doe",
       media: [],
     }
   );
@@ -38,7 +40,15 @@ export default function EntityForm({ initialData, onSubmit }) {
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-    const validFiles = files.filter((file) => file instanceof File);
+    const validFiles = files.filter((file) => {
+      if (file.type.startsWith("video") && file.size > 50 * 1024 * 1024) {
+        alert(
+          `Video "${file.name}" exceeds the 50MB limit and will not be added.`
+        );
+        return false;
+      }
+      return file instanceof File;
+    });
     setFormData((prev) => ({
       ...prev,
       media: [...(prev.media || []), ...validFiles],
@@ -69,24 +79,14 @@ export default function EntityForm({ initialData, onSubmit }) {
       return;
     }
 
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("category", formData.category);
-    data.append("condition", formData.condition);
-    data.append("description", formData.description);
-    data.append("price", formData.price);
-    data.append("seller", "John Doe");
-
-    (formData.media || []).forEach((file) => {
-      if (file instanceof File) {
-        data.append("media", file);
-      }
-    });
-
     if (isEditing) {
-      editEntity({ id: initialData.id, ...formData });
+      console.log(formData);
+      // await editEntity(initialData.id, data);
+      await editEntity(initialData.id, formData);
     } else {
-      await addEntity(data);
+      console.log(formData);
+      // await addEntity(data);
+      await addEntity(formData);
     }
 
     if (!isEditing) {

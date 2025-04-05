@@ -23,6 +23,15 @@ class WatchSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'price', 'category', 'condition', 'media' , 'seller', 'created_at']
         read_only_fields = ['created_at']
 
+    def validate_price(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Price must be greater than 0.")
+        return value
+
+    def validate_name(self, value):
+        if len(value.strip()) == 0:
+            raise serializers.ValidationError("Name cannot be blank.")
+        return value
     # def validate_price(self, value):
     #     if value <= 0:
     #         raise serializers.ValidationError("Price must be greater than 0.")

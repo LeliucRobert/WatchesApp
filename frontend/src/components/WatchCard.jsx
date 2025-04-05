@@ -47,7 +47,7 @@ export default function WatchCard({
   const { deleteEntity } = useEntities();
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image
   const [isHovered, setIsHovered] = useState(false);
-  console.log(media);
+
   function getPriceColor(price, min, max) {
     if (max === min) return "hsl(120, 100%, 40%)";
     const ratio = (price - min) / (max - min);

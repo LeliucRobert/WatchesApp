@@ -11,6 +11,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useEntities } from "@/context/EntityContext";
+import { useEffect } from "react";
 import * as React from "react";
 import EditForm from "@/components/EditForm";
 import EntityForm from "@/components/EntityForm";
@@ -19,12 +20,13 @@ import WatchStatsDashboard from "@/components/WatchStatsDashboard";
 import Footer from "@/components/Footer";
 import GenerateFakeButton from "@/components/GenerateFakeButton";
 export default function WatchlyUI() {
-  const { entities } = useEntities();
+  const { entities, loadEntities } = useEntities();
   if (entities.length > 0) {
     // console.log(entities);
     // console.log(entities[0]);
     // console.log(entities[0].id);
   }
+
   return (
     <div className='container'>
       {/* Sell your watch form */}

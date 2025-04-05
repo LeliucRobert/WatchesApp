@@ -19,13 +19,13 @@ import Category from "@/components/Category";
 import Filter from "@/components/Filter";
 import WatchCard from "@/components/WatchCard";
 import { useEntities } from "@/context/EntityContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WatchStatsDashboard from "@/components/WatchStatsDashboard";
 
 export default function Home() {
   const [showCharts, setShowCharts] = useState(false); // New state
   const [statisticsEnabled, setStatisticsEnabled] = useState(false);
-  const { entities } = useEntities();
+  const { entities, loadEntities } = useEntities();
   const [filters, setFilters] = useState({
     searchTerm: "",
     price: "All Prices",
