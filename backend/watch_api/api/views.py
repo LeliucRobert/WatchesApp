@@ -103,3 +103,17 @@ def delete_watch(request, pk):
 @api_view(['GET'])
 def ping(request):
     return Response({"message": "pong"}, status=200)
+
+
+# from channels.layers import get_channel_layer
+# from asgiref.sync import async_to_sync
+
+# def broadcast_new_watch(watch_data):
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         "watches",
+#         {
+#             "type": "send_watch_update",
+#             "data": watch_data
+#         }
+#     )

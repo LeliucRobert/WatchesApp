@@ -24,10 +24,11 @@ SECRET_KEY = "django-insecure-55=fr!*sgs)m^*(h%n%p50-uphd(#84)(+jbmh1thx@zc1c7_#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+STATICFILES_DIRS = [BASE_DIR / "static"]  
+STATIC_ROOT = BASE_DIR / "staticfiles"
 ALLOWED_HOSTS = []
 
-
+WATCH_GENERATOR_INTERVAL = 20
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,7 +41,16 @@ INSTALLED_APPS = [
     "rest_framework",
     "api",
     "corsheaders",
+    "channels",
 ]
+
+ASGI_APPLICATION = "watch_api.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -51,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [

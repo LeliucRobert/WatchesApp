@@ -27,6 +27,18 @@ export default function WatchlyUI() {
     // console.log(entities[0].id);
   }
 
+  // useEffect(() => {
+  //   const socket = new WebSocket("ws://localhost:8000/ws/watches/");
+
+  //   socket.onmessage = (event) => {
+  //     const data = JSON.parse(event.data);
+  //     console.log("Received real-time data:", data);
+  //     // Update chart or entity list state here
+  //   };
+
+  //   return () => socket.close();
+  // }, []);
+
   return (
     <div className='container'>
       {/* Sell your watch form */}
