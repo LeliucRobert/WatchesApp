@@ -2,11 +2,23 @@
 
 const BASE_URL = "http://127.0.0.1:8000/api/watch/"; // Update if your API is under another path
 
-export async function fetchWatches() {
-  const res = await fetch("http://localhost:8000/api/watches/");
-  const data = await res.json();
+export async function fetchWatches(queryString) {
+  try {
+    const response = await fetch(
+      `http://localhost:8000/api/watches/?${queryString}`
+    );
 
-  return data;
+    if (!response.ok) {
+      throw new Error("Failed to fetch watches");
+    }
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching watches:", error);
+    return { results: [], count: 0 };
+  }
 }
 
 export async function fetchFilteredWatches(filters = {}) {

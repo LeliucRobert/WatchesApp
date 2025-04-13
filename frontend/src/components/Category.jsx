@@ -4,9 +4,13 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import "../styles/components/Category.css";
-export default function Category({ Name, Description, ImageURL }) {
+export default function Category({ Name, Description, ImageURL, onClick }) {
   return (
-    <div className='category-card'>
+    <div
+      className='category-card'
+      onClick={onClick}
+      style={{ cursor: "pointer" }}
+    >
       <div className='category-image-container'>
         <Image
           src={ImageURL || "/placeholder.svg?height=80&width=80"}

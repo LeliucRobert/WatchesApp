@@ -5,6 +5,8 @@ from .models import Watch, WatchFile
 from .serializers import WatchSerializer, WatchFileSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from rest_framework.settings import api_settings
+
 import os
 
 # GET all watches or POST (create new watch)
@@ -48,20 +50,47 @@ def watch_list(request):
         watches = watches.filter(condition=condition)
 
     # --- 💰 Price filters ---
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    if min_price:
-        watches = watches.filter(price__gte=min_price)
-    if max_price:
-        watches = watches.filter(price__lte=max_price)
+    price = request.query_params.get("price")
+    if price and "-" in price:
+        try:
+            min_price, max_price = map(float, price.split("-"))
+            
+            watches = watches.filter(price__gte=min_price)
+
+            if max_price != 2e9:
+                watches = watches.filter(price__lte=max_price)
+        except ValueError:
+                pass
+    
+
 
     # --- 🔀 Sorting ---
-    sort_by = request.GET.get('sort_by')  # e.g. "-price", "created_at"
-    if sort_by:
-        watches = watches.order_by(sort_by)
+    sort_by = request.GET.get('sort')  # e.g. "-price", "created_at"
+    if sort_by == "price_asc":
+        watches = watches.order_by("price")
+    if sort_by == "price_desc":
+        watches = watches.order_by("-price")
+    if sort_by == "newest":
+        watches = watches.order_by("-created_at")
+
+    paginator = api_settings.DEFAULT_PAGINATION_CLASS()
+    paginated_queryset = paginator.paginate_queryset(watches, request)
+    serializer = WatchSerializer(paginated_queryset, many=True, context={'request': request})
+    return paginator.get_paginated_response(serializer.data)
+
+@api_view(['GET'])
+def watch_list_sorted(request):
+    # watches = Watch.objects.all().order_by('-created_at')
+    watches = Watch.objects.all()
+
+    
+
+    
+    watches = watches.order_by('-created_at')
+
+    
     serializer = WatchSerializer(watches, many=True, context={'request': request})
     return Response(serializer.data)
-
 
 @api_view(['PATCH'])
 def watch_update(request, pk):
@@ -104,6 +133,17 @@ def delete_watch(request, pk):
 def ping(request):
     return Response({"message": "pong"}, status=200)
 
+from .tasks import start_generator, stop_generator
+
+@api_view(["POST"])
+def api_start_generator(request):
+    start_generator()
+    return Response({"message": "Watch generator started"})
+
+@api_view(["POST"])
+def api_stop_generator(request):
+    stop_generator()
+    return Response({"message": "Watch generator stopped"})
 
 # from channels.layers import get_channel_layer
 # from asgiref.sync import async_to_sync

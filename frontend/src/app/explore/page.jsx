@@ -19,71 +19,64 @@ import Category from "@/components/Category";
 import Filter from "@/components/Filter";
 import WatchCard from "@/components/WatchCard";
 import { useEntities } from "@/context/EntityContext";
+import { useRouter } from "next/navigation";
+import { fetchWatches } from "@/api/watchApi";
 import { useState, useEffect } from "react";
 import WatchStatsDashboard from "@/components/WatchStatsDashboard";
 
 export default function Home() {
+  const router = useRouter();
+  const { query, isReady } = router;
+  console.log(query);
+  const [page, setPage] = useState(Number(query?.page) || 1);
+  const [category, setCategory] = useState(query?.category || "");
+  const [filters, setFilters] = useState({
+    searchTerm: query?.search || "",
+    price: query?.price || "All Prices",
+    sort: query?.sort || "Featured",
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (page) params.set("page", page.toString());
+    if (category) params.set("category", category);
+    if (filters.price != "All Prices") params.set("price", filters.price);
+    if (filters.sort != "Featured") params.set("sort", filters.sort);
+    if (filters.searchTerm) params.set("search", filters.searchTerm);
+
+    const queryString = params.toString();
+    const newUrl = `/explore?${queryString}`;
+    router.replace(newUrl);
+
+    const loadData = async () => {
+      const data = await fetchWatches(queryString);
+      setEntities(data.results);
+      setTotalPages(Math.ceil(data.count / 8));
+    };
+
+    loadData();
+  }, [page, category, filters, isReady]);
+
   const [showCharts, setShowCharts] = useState(false); // New state
   const [statisticsEnabled, setStatisticsEnabled] = useState(false);
-  const { entities, loadEntities } = useEntities();
-  const [filters, setFilters] = useState({
-    searchTerm: "",
-    price: "All Prices",
-    sort: "Featured",
-  });
+  const [totalPages, setTotalPages] = useState(0);
+  const [entities, setEntities] = useState([]);
+  // const { entities, loadEntities } = useEntities();
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
+    setPage(1);
   };
 
-  let filteredWatches = [...entities];
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+    setPage(1);
+  };
 
-  if (filters.searchTerm) {
-    filteredWatches = filteredWatches.filter((watch) =>
-      watch.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
-    );
-  }
+  const currentWatches = entities;
 
-  // **Price Filtering**
-  filteredWatches = filteredWatches.filter((watch) => {
-    const cleanedPrice = watch.price
-      .toString()
-      .replace(/[^\d.]/g, "")
-      .trim();
-    const price = parseFloat(cleanedPrice) || 0;
-
-    if (filters.price === "< $50") return price < 50;
-    if (filters.price === "$50 - $249") return price >= 50 && price <= 249;
-    if (filters.price === "$250 - $499") return price >= 250 && price <= 499;
-    if (filters.price === "$500 - $999") return price >= 500 && price <= 999;
-    if (filters.price === "$1000 - 4999$")
-      return price >= 1000 && price <= 4999;
-    if (filters.price === "> $4999") return price > 4999;
-
-    return true;
-  });
-
-  // **Sorting**
-  if (filters.sort === "Price: Low to High") {
-    filteredWatches.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-  } else if (filters.sort === "Price: High to Low") {
-    filteredWatches.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-  } else if (filters.sort === "Newest") {
-    filteredWatches.sort((a, b) => b.id - a.id);
-  }
-
-  const itemsPerPage = 8;
-
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(filteredWatches.length / itemsPerPage);
-
-  const currentWatches = filteredWatches.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const prices = filteredWatches.map(
+  const prices = entities.map(
     (w) =>
       parseFloat(
         w.price
@@ -124,24 +117,28 @@ export default function Home() {
             Name='Luxury Watches'
             Description='Top-tier timepieces crafted with elegance'
             ImageURL='/images/luxury.png'
+            onClick={() => handleCategoryChange("luxury")}
           />
 
           <Category
             Name='Vintage Watches'
             Description='Durable and stylish watches for active lifestyles'
             ImageURL='/images/vintage.png'
+            onClick={() => handleCategoryChange("vintage")}
           />
 
           <Category
             Name='Casual Watches'
             Description='Everyday comfort with timeless design'
             ImageURL='/images/casual.png'
+            onClick={() => handleCategoryChange("casual")}
           />
 
           <Category
             Name=' SmartWatches'
             Description='Classic heritage styles that never go out of fashion'
             ImageURL='/images/smartwatch.png'
+            onClick={() => handleCategoryChange("smartwatch")}
           />
         </div>
       </section>
@@ -220,9 +217,9 @@ export default function Home() {
 
         {/* Pagination */}
         <Pagination
-          currentPage={currentPage}
+          currentPage={page}
           totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={(page) => setPage(page)}
         />
       </section>
       <Footer />

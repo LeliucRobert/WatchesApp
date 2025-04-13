@@ -44,6 +44,11 @@ INSTALLED_APPS = [
     "channels",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 8
+}
+
 ASGI_APPLICATION = "watch_api.asgi.application"
 
 CHANNEL_LAYERS = {

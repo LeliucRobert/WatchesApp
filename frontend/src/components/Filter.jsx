@@ -15,7 +15,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { Search, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Filter({ onFilterChange, showStats, onToggleStats }) {
   const [filters, setFilters] = useState({
@@ -23,15 +23,40 @@ export default function Filter({ onFilterChange, showStats, onToggleStats }) {
     price: "All Prices",
     sort: "Featured",
   });
+  const [searchInput, setSearchInput] = useState(filters.searchTerm || "");
+
+  const handleSearchClick = () => {
+    handleFilterChange("searchTerm", searchInput);
+  };
 
   // **Instantly update and apply filters**
   const handleFilterChange = (filterType, value) => {
     setFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters, [filterType]: value };
-      onFilterChange(updatedFilters); // Pass the latest filters
       return updatedFilters;
     });
   };
+
+  useEffect(() => {
+    onFilterChange(filters);
+  }, [filters]);
+
+  const priceOptions = [
+    { label: "All Prices", value: "All Prices" },
+    { label: "< $50", value: "0-49" },
+    { label: "$50 - $249", value: "50-249" },
+    { label: "$250 - $499", value: "250-499" },
+    { label: "$500 - $999", value: "500-999" },
+    { label: "$1000 - $4999", value: "1000-4999" },
+    { label: "> $4999", value: "5000-2e9" }, // Example max value
+  ];
+
+  const sortOptions = [
+    { label: "Featured", value: "Featured" },
+    { label: "Price: Low to High", value: "price_asc" },
+    { label: "Price: High to Low", value: "price_desc" },
+    { label: "Newest", value: "newest" },
+  ];
 
   return (
     <div>
@@ -41,10 +66,13 @@ export default function Filter({ onFilterChange, showStats, onToggleStats }) {
             type='text'
             placeholder='Search in site'
             className='search-input'
-            value={filters.searchTerm}
-            onChange={(e) => handleFilterChange("searchTerm", e.target.value)}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
-          <Search className='search-icon' />
+          <Search
+            className='search-icon'
+            onClick={handleSearchClick}
+            style={{ cursor: "pointer" }} // 🔥 make it clickable
+          />
         </div>
 
         <div className='filter-controls'>
@@ -52,29 +80,25 @@ export default function Filter({ onFilterChange, showStats, onToggleStats }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className='dropdown-button' variant='outline'>
-                <span>Price Range: {filters.price}</span>
+                <span>
+                  Price Range:{" "}
+                  {priceOptions.find((opt) => opt.value === filters.price)
+                    ?.label || "All Prices"}
+                </span>
                 <ChevronDown className='dropdown-icon' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='dropdown-content'>
-              {[
-                "All Prices",
-                "< $50",
-                "$50 - $249",
-                "$250 - $499",
-                "$500 - $999",
-                "$1000 - 4999$",
-                "> $4999",
-              ].map((price) => (
+              {priceOptions.map(({ label, value }) => (
                 <DropdownMenuItem
-                  key={price}
+                  key={value}
                   className={`dropdown-item ${
-                    filters.price === price ? "selected" : ""
+                    filters.price === value ? "selected" : ""
                   }`}
-                  onClick={() => handleFilterChange("price", price)}
+                  onClick={() => handleFilterChange("price", value)}
                 >
-                  {price}{" "}
-                  {filters.price === price && <Check className='check-icon' />}
+                  {label}
+                  {filters.price === value && <Check className='check-icon' />}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -84,26 +108,25 @@ export default function Filter({ onFilterChange, showStats, onToggleStats }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className='dropdown-button' variant='outline'>
-                <span>Sort By: {filters.sort}</span>
+                <span>
+                  Sort By:{" "}
+                  {sortOptions.find((opt) => opt.value === filters.sort)
+                    ?.label || "Featured"}
+                </span>
                 <ChevronDown className='dropdown-icon' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='dropdown-content'>
-              {[
-                "Featured",
-                "Price: Low to High",
-                "Price: High to Low",
-                "Newest",
-              ].map((sort) => (
+              {sortOptions.map(({ label, value }) => (
                 <DropdownMenuItem
-                  key={sort}
+                  key={value}
                   className={`dropdown-item ${
-                    filters.sort === sort ? "selected" : ""
+                    filters.sort === value ? "selected" : ""
                   }`}
-                  onClick={() => handleFilterChange("sort", sort)}
+                  onClick={() => handleFilterChange("sort", value)}
                 >
-                  {sort}{" "}
-                  {filters.sort === sort && <Check className='check-icon' />}
+                  {label}
+                  {filters.sort === value && <Check className='check-icon' />}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>

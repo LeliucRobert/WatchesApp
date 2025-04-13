@@ -8,67 +8,65 @@ import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 
 export default function GenerateFakeButton() {
-  const { addEntity } = useEntities();
-  const [isConnected, setIsConnected] = useState(false);
-  const [latestWatch, setLatestWatch] = useState(null);
+  const [isActive, setIsActive] = useState(false);
+  const { addEntity, loadEntities } = useEntities();
   const socketRef = useRef(null);
 
-  // const handleGenerate = () => {
-  //   const fakeEntities = generateFakeWatches(20); // 👈 generate 20 at once
-  //   fakeEntities.forEach((entity) => addEntity(entity)); // 👈 add each individually
-  // };
+  const toggleSystem = async () => {
+    if (isActive) {
+      // Stop generator
+      await fetch("http://localhost:8000/api/stop_generator/", {
+        method: "POST",
+      });
+      console.log("🛑 Generator stopped");
 
-  const connectWebSocket = () => {
-    if (socketRef.current) return;
-
-    const socket = new WebSocket("ws://localhost:8000/ws/watches/");
-    socketRef.current = socket;
-
-    socket.onopen = () => {
-      console.log("✅ WebSocket connected");
-      setIsConnected(true);
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("📡 Received real-time data:", data);
-      setLatestWatch(data);
-      addEntity(data); // Optional: Add to frontend store immediately
-    };
-
-    socket.onclose = () => {
-      console.log("❌ WebSocket disconnected");
-      setIsConnected(false);
-      socketRef.current = null;
-    };
-  };
-
-  const disconnectWebSocket = () => {
-    if (socketRef.current) {
-      socketRef.current.close();
-      socketRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
+      // Disconnect WebSocket
       if (socketRef.current) {
         socketRef.current.close();
+        socketRef.current = null;
       }
-    };
-  }, []);
+      console.log("❌ WebSocket disconnected");
+    } else {
+      // Start generator
+      await fetch("http://localhost:8000/api/start_generator/", {
+        method: "POST",
+      });
+      console.log("🟢 Generator started");
+
+      // Connect WebSocket
+      const socket = new WebSocket("ws://localhost:8000/ws/watches/");
+      socketRef.current = socket;
+
+      socket.onopen = () => console.log("✅ WebSocket connected");
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("📡 Received real-time data:", data);
+        addEntity(data);
+        loadEntities();
+      };
+
+      socket.onclose = () => {
+        console.log("🔌 WebSocket closed");
+        socketRef.current = null;
+      };
+    }
+
+    setIsActive((prev) => !prev);
+  };
 
   return (
-    <div style={{ marginBottom: "1rem" }}>
-      {!isConnected ? (
-        <Button onClick={connectWebSocket} className='bg-blue-600 text-black'>
-          Connect to Real-Time Watches
-        </Button>
-      ) : (
-        <Button onClick={disconnectWebSocket} className='bg-red-600 text-black'>
-          Disconnect WebSocket
-        </Button>
-      )}
+    <div className='my-4'>
+      <Button
+        onClick={toggleSystem}
+        className={`text-black ${
+          isActive ? "bg-yellow-500" : "bg-green-600"
+        } hover:opacity-90`}
+      >
+        {isActive
+          ? "Stop Generator & WebSocket"
+          : "Start Generator & WebSocket"}
+      </Button>
     </div>
   );
 }
