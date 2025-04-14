@@ -28,8 +28,11 @@ export default function Home() {
   const router = useRouter();
   const { query, isReady } = router;
   console.log(query);
+  const { loadEntities, backendReady } = useEntities();
+
   const [page, setPage] = useState(Number(query?.page) || 1);
   const [category, setCategory] = useState(query?.category || "");
+
   const [filters, setFilters] = useState({
     searchTerm: query?.search || "",
     price: query?.price || "All Prices",
@@ -37,6 +40,7 @@ export default function Home() {
   });
 
   useEffect(() => {
+    if (!backendReady) return;
     const params = new URLSearchParams();
 
     if (page) params.set("page", page.toString());
@@ -50,13 +54,17 @@ export default function Home() {
     router.replace(newUrl);
 
     const loadData = async () => {
-      const data = await fetchWatches(queryString);
-      setEntities(data.results);
-      setTotalPages(Math.ceil(data.count / 8));
+      const data = await loadEntities(queryString);
+
+      const list = data.results ?? data; // ✅ use results or fallback
+      const count = data.count ?? data.length ?? 0;
+
+      setEntities(list);
+      setTotalPages(Math.ceil(count / 8));
     };
 
     loadData();
-  }, [page, category, filters, isReady]);
+  }, [page, category, filters, isReady, backendReady]);
 
   const [showCharts, setShowCharts] = useState(false); // New state
   const [statisticsEnabled, setStatisticsEnabled] = useState(false);

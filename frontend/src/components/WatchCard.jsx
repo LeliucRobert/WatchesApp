@@ -42,6 +42,7 @@ export default function WatchCard({
   statisticsEnabled = false,
   minPrice,
   maxPrice,
+  onEntityChange,
 }) {
   const [showMore, setShowMore] = useState(false);
   const { deleteEntity } = useEntities();
@@ -178,6 +179,7 @@ export default function WatchCard({
                 media={media}
                 category={category}
                 condition={condition}
+                onEntityChange={onEntityChange}
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -205,7 +207,10 @@ export default function WatchCard({
                       Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => deleteEntity(id)}
+                      onClick={async () => {
+                        await deleteEntity(id); // ✅ delete the item
+                        onEntityChange?.(); // ✅ refresh the list if function exists
+                      }}
                       className='alert-dialog-confirm'
                     >
                       Confirm

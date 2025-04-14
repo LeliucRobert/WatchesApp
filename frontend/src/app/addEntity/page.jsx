@@ -11,7 +11,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useEntities } from "@/context/EntityContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { fetchWatches } from "@/api/watchApi";
 import * as React from "react";
 import EditForm from "@/components/EditForm";
 import EntityForm from "@/components/EntityForm";
@@ -19,25 +20,21 @@ import WatchCard from "@/components/WatchCard";
 import WatchStatsDashboard from "@/components/WatchStatsDashboard";
 import Footer from "@/components/Footer";
 import GenerateFakeButton from "@/components/GenerateFakeButton";
+import { useBackendStatus } from "@/utils/BackendStatus";
 export default function WatchlyUI() {
-  const { entities, loadEntities } = useEntities();
-  if (entities.length > 0) {
-    // console.log(entities);
-    // console.log(entities[0]);
-    // console.log(entities[0].id);
-  }
+  const { loadEntities, backendReady } = useEntities();
+  const [entities, setEntities] = useState([]);
+  const refreshEntities = async () => {
+    const data = await loadEntities();
+    setEntities(data.results ?? data); // Fallback if no `.results`
+  };
+  useEffect(() => {
+    console.log(backendReady);
 
-  // useEffect(() => {
-  //   const socket = new WebSocket("ws://localhost:8000/ws/watches/");
+    if (!backendReady) return;
 
-  //   socket.onmessage = (event) => {
-  //     const data = JSON.parse(event.data);
-  //     console.log("Received real-time data:", data);
-  //     // Update chart or entity list state here
-  //   };
-
-  //   return () => socket.close();
-  // }, []);
+    refreshEntities();
+  }, [backendReady]);
 
   return (
     <div className='container'>
@@ -46,7 +43,7 @@ export default function WatchlyUI() {
         <div className='sell-form__container'>
           <h1 className='sell-form__title'>Sell your watch now!</h1>
           <p className='sell-form__subtitle'>Provide the information below</p>
-          <EntityForm />
+          <EntityForm onEntityChange={refreshEntities} />
         </div>
       </section>
       {/* Active Listings */}
@@ -72,6 +69,7 @@ export default function WatchlyUI() {
                       media={watch.media}
                       category={watch.category}
                       condition={watch.condition}
+                      onEntityChange={refreshEntities}
                     />
                   </CarouselItem>
                 );
@@ -89,7 +87,7 @@ export default function WatchlyUI() {
       <GenerateFakeButton />
 
       <div style={{ marginBottom: "4rem" }}>
-        <WatchStatsDashboard />
+        {/* <WatchStatsDashboard /> */}
       </div>
 
       <Footer />

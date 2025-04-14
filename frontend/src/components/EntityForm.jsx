@@ -8,7 +8,7 @@ import { Upload, Video } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import "../styles/components/EntityForm.css";
 
-export default function EntityForm({ initialData, onSubmit }) {
+export default function EntityForm({ initialData, onSubmit, onEntityChange }) {
   const fileInputRef = useRef(null);
   const { addEntity, editEntity } = useEntities();
 
@@ -83,10 +83,12 @@ export default function EntityForm({ initialData, onSubmit }) {
       console.log(formData);
       // await editEntity(initialData.id, data);
       await editEntity(initialData.id, formData);
+      onEntityChange();
     } else {
       console.log(formData);
       // await addEntity(data);
       await addEntity(formData);
+      onEntityChange();
     }
 
     if (!isEditing) {

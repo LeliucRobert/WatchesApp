@@ -34,6 +34,7 @@ export default function EditForm({
   media,
   category,
   condition,
+  onEntityChange,
 }) {
   const [open, setOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({
@@ -87,6 +88,7 @@ export default function EditForm({
                 condition,
               }}
               onSubmit={() => setOpen(false)}
+              onEntityChange={onEntityChange}
             />
           </div>
 

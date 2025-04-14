@@ -79,15 +79,9 @@ def watch_list(request):
     return paginator.get_paginated_response(serializer.data)
 
 @api_view(['GET'])
-def watch_list_sorted(request):
+def watch_list_by_seller(request , seller_id):
     # watches = Watch.objects.all().order_by('-created_at')
-    watches = Watch.objects.all()
-
-    
-
-    
-    watches = watches.order_by('-created_at')
-
+    watches = Watch.objects.filter(seller__id=seller_id)
     
     serializer = WatchSerializer(watches, many=True, context={'request': request})
     return Response(serializer.data)

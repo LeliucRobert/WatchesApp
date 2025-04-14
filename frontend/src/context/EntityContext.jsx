@@ -40,28 +40,72 @@ const loadQueue = () =>
 
 const clearQueue = () => localStorage.removeItem(OFFLINE_QUEUE_KEY);
 
+const updateAddInQueueOrFallbackToEdit = (id, updatedData) => {
+  const queue = loadQueue();
+  let found = false;
+
+  const updatedQueue = queue.map((op) => {
+    if (op.type === "ADD" && op.data.id === id) {
+      found = true;
+      return { ...op, data: { ...op.data, ...updatedData } };
+    }
+    return op;
+  });
+
+  if (!found) {
+    // Add a separate EDIT operation as fallback
+    updatedQueue.push({ type: "EDIT", id, data: updatedData });
+  }
+
+  localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(updatedQueue));
+};
+
+const deleteFromQueueOrMarkAsDelete = (id) => {
+  const queue = loadQueue();
+
+  const isOfflineAdd = queue.find(
+    (op) => op.type === "ADD" && op.data.id === id
+  );
+
+  let updatedQueue;
+
+  if (isOfflineAdd) {
+    updatedQueue = queue.filter(
+      (op) => !(op.type === "ADD" && op.data.id === id)
+    );
+  } else {
+    updatedQueue = [...queue, { type: "DELETE", id }];
+  }
+
+  localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(updatedQueue));
+};
+
 const EntityContext = createContext();
 export const useEntities = () => useContext(EntityContext);
 export const EntityProvider = ({ children }) => {
   const { isOffline, isServerDown, statusChecked } = useBackendStatus();
+  const [backendReady, setBackendReady] = useState(false);
 
   const [entities, setEntities] = useState([]);
-  const loadEntities = async () => {
+  const loadEntities = async (query) => {
     console.log(isOffline);
 
-    if (isServerDown) {
+    if (isOffline || isServerDown) {
       const queue = JSON.parse(localStorage.getItem("offlineWatchQueue")) || [];
       console.log(queue);
       const local = queue.map((op) => op.data);
       console.log(local);
-      setEntities(local);
-      return;
-    }
-    try {
-      const data = await fetchWatches();
-      setEntities(data);
-    } catch (error) {
-      console.error("Failed to fetch watches:", error);
+      // setEntities(local);
+      return local;
+    } else {
+      try {
+        const data = await fetchWatches(query);
+        console.log(data);
+        // setEntities(data);
+        return data;
+      } catch (error) {
+        console.error("Failed to fetch watches:", error);
+      }
     }
   };
 
@@ -111,8 +155,9 @@ export const EntityProvider = ({ children }) => {
     if (!isOffline && !isServerDown) {
       syncQueue();
     }
+    setBackendReady(true);
+
     // clearQueue();
-    loadEntities();
   }, [isOffline, isServerDown, statusChecked]);
 
   const addEntity = async (newEntity) => {
@@ -120,7 +165,7 @@ export const EntityProvider = ({ children }) => {
       if (isOffline || isServerDown) {
         console.log("Cleaned Entity from FormData:", newEntity);
         console.log(entities);
-        setEntities((prev) => [...prev, newEntity]);
+        // setEntities((prev) => [...prev, newEntity]);
         saveToQueue({ type: "ADD", data: newEntity });
         // await loadEntities();
         return;
@@ -139,7 +184,7 @@ export const EntityProvider = ({ children }) => {
           if (file instanceof File) {
             data.append("media", file);
           } else if (isEditing && file.id) {
-            data.append("existing_media_ids", file.id); // keep reference to existing files
+            data.append("existing_media_ids", file.id);
           }
         });
 
@@ -155,23 +200,8 @@ export const EntityProvider = ({ children }) => {
   const editEntity = async (entityId, updatedEntity) => {
     try {
       if (isOffline || isServerDown) {
-        // const cleaned = {
-        //   id: entityId,
-        //   name: updatedEntity.get("name"),
-        //   category: updatedEntity.get("category"),
-        //   condition: updatedEntity.get("condition"),
-        //   description: updatedEntity.get("description"),
-        //   price: updatedEntity.get("price"),
-        //   seller: updatedEntity.get("seller"),
-        //   media: updatedEntity.getAll("media") || [],
-        // };
-        // setEntities((prev) =>
-        //   prev.map((item) =>
-        //     item.id === entityId ? { ...item, ...cleaned } : item
-        //   )
-        // );
-        // saveToQueue({ type: "EDIT", id: entityId, data: cleaned });
-        // return;
+        updateAddInQueueOrFallbackToEdit(entityId, updatedEntity);
+        return;
       } else {
         const data = new FormData();
         data.append("name", updatedEntity.name);
@@ -204,14 +234,11 @@ export const EntityProvider = ({ children }) => {
   const deleteEntity = async (id) => {
     try {
       if (isOffline || isServerDown) {
-        setEntities((prev) => prev.filter((item) => item.id !== id));
-
-        // saveToQueue({ type: "DELETE", id });
+        deleteFromQueueOrMarkAsDelete(id);
 
         return;
       } else {
         await deleteWatch(id);
-        setEntities((prev) => prev.filter((item) => item.id !== id));
       }
     } catch (error) {
       console.error("Failed to delete watch:", error);
@@ -220,7 +247,14 @@ export const EntityProvider = ({ children }) => {
 
   return (
     <EntityContext.Provider
-      value={{ entities, loadEntities, addEntity, deleteEntity, editEntity }}
+      value={{
+        entities,
+        loadEntities,
+        backendReady,
+        addEntity,
+        deleteEntity,
+        editEntity,
+      }}
     >
       {children}
     </EntityContext.Provider>
