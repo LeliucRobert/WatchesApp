@@ -7,9 +7,9 @@ import { useEntities } from "@/context/EntityContext";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 
-export default function GenerateFakeButton() {
+export default function GenerateFakeButton({ onNewEntity }) {
   const [isActive, setIsActive] = useState(false);
-  const { addEntity, loadEntities } = useEntities();
+  const { addEntity } = useEntities();
   const socketRef = useRef(null);
 
   const toggleSystem = async () => {
@@ -42,8 +42,12 @@ export default function GenerateFakeButton() {
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         console.log("📡 Received real-time data:", data);
+
+        if (onNewEntity) {
+          onNewEntity(data); // ✅ Send it to parent
+        }
+
         addEntity(data);
-        loadEntities();
       };
 
       socket.onclose = () => {

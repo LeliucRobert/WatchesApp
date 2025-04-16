@@ -25,7 +25,11 @@ export default function WatchlyUI() {
   const { loadEntities, backendReady } = useEntities();
   const [entities, setEntities] = useState([]);
   const refreshEntities = async () => {
-    const data = await loadEntities();
+    const params = new URLSearchParams();
+    params.set("all", "true");
+
+    const queryString = params.toString();
+    const data = await loadEntities(queryString);
     setEntities(data.results ?? data); // Fallback if no `.results`
   };
   useEffect(() => {
@@ -84,10 +88,14 @@ export default function WatchlyUI() {
           </p>
         )}
       </section>
-      <GenerateFakeButton />
+      <GenerateFakeButton
+        onNewEntity={(entity) => {
+          setEntities((prev) => [...prev, entity]);
+        }}
+      />
 
       <div style={{ marginBottom: "4rem" }}>
-        {/* <WatchStatsDashboard /> */}
+        <WatchStatsDashboard entities={entities} />
       </div>
 
       <Footer />

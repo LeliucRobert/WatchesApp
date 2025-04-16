@@ -73,6 +73,18 @@ def watch_list(request):
     if sort_by == "newest":
         watches = watches.order_by("-created_at")
 
+    seller = request.GET.get('seller')
+    if seller:
+        watches = watches.filter(seller=seller)
+
+    fetch_all = request.GET.get("all", "false").lower() == "true"
+    if fetch_all:
+        serializer = WatchSerializer(watches, many=True, context={'request': request})
+        return Response({
+            "count": watches.count(),
+            "results": serializer.data
+        })
+
     paginator = api_settings.DEFAULT_PAGINATION_CLASS()
     paginated_queryset = paginator.paginate_queryset(watches, request)
     serializer = WatchSerializer(paginated_queryset, many=True, context={'request': request})

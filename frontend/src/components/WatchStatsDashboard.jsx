@@ -22,8 +22,7 @@ import {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#B620E0"];
 
-export default function WatchStatsDashboard() {
-  const { entities } = useEntities();
+export default function WatchStatsDashboard({ entities }) {
   const [priceData, setPriceData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [sellerData, setSellerData] = useState([]);
