@@ -183,9 +183,10 @@ export const EntityProvider = ({ children }) => {
         (newEntity.media || []).forEach((file) => {
           if (file instanceof File) {
             data.append("media", file);
-          } else if (isEditing && file.id) {
-            data.append("existing_media_ids", file.id);
           }
+          // else if (isEditing && file.id) {
+          //   data.append("existing_media_ids", file.id);
+          // }
         });
 
         const created = await createWatch(data);
