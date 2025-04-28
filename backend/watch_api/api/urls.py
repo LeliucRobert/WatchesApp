@@ -11,4 +11,8 @@ urlpatterns = [
 
     path("start_generator/", views.api_start_generator, name='watch_generator_start'),
     path("stop_generator/", views.api_stop_generator, name='watch_generator_stop'),
+    path("register/", views.register , name="user_register"),
+    path('login/', views.user_login , name="user_login"),
+    path('logout/', views.user_logout , name="user_logout"),
+    path('my-watches/', views.my_watches , name="watch_list_user"),
 ]

@@ -1,0 +1,103 @@
+/**
+ * All class names are LOCAL to the register page
+ *
+ * @format
+ */
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px; /* Push it down under Navbar */
+  min-height: calc(100vh - 80px); /* Adjust if your navbar is ~80px tall */
+  background: #f5f7fa;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.register-logo img {
+  width: 80px;
+  height: auto;
+}
+
+.register-title {
+  text-align: center;
+  font-size: 32px;
+  color: #222;
+  margin-bottom: 24px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-input {
+  margin-bottom: 15px;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.register-input:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.register-button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.register-button:hover {
+  background-color: #333;
+}
+
+.register-error,
+.register-success {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.register-error {
+  color: #e63946;
+}
+
+.register-success {
+  color: #2a9d8f;
+}

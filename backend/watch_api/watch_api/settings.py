@@ -73,6 +73,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = "watch_api.urls"
 
 TEMPLATES = [

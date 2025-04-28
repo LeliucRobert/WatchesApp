@@ -2,10 +2,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Watch, WatchFile
+from django.contrib.auth.models import User
 from .serializers import WatchSerializer, WatchFileSerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.settings import api_settings
+from django.contrib.auth import authenticate, login, logout
 
 import os
 
@@ -134,7 +136,17 @@ def delete_watch(request, pk):
         return Response({"message": "Watch deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     except Watch.DoesNotExist:
         return Response({"error": "Watch not found."}, status=status.HTTP_404_NOT_FOUND)
-    
+
+@api_view(['GET'])
+def my_watches(request):
+    if not request.user.is_authenticated:
+        return Response({'error': 'Not authenticated'}, status=401)
+
+    watches = Watch.objects.filter(seller=request.user)
+    serializer = WatchSerializer(watches, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
 @api_view(['GET'])
 def ping(request):
     return Response({"message": "pong"}, status=200)
@@ -151,15 +163,38 @@ def api_stop_generator(request):
     stop_generator()
     return Response({"message": "Watch generator stopped"})
 
-# from channels.layers import get_channel_layer
-# from asgiref.sync import async_to_sync
 
-# def broadcast_new_watch(watch_data):
-#     channel_layer = get_channel_layer()
-#     async_to_sync(channel_layer.group_send)(
-#         "watches",
-#         {
-#             "type": "send_watch_update",
-#             "data": watch_data
-#         }
-#     )
+
+@api_view(['POST'])
+def register(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if not username or not password:
+        return Response({'error': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already taken.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create_user(username=username, password=password)
+    return Response({'message': 'User registered successfully.'})
+# from django.views.decorators.csrf import csrf_exempt
+
+# @csrf_exempt
+@api_view(['POST'])
+def user_login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+        login(request, user)
+        return Response({'message': 'Login successful.'})
+    else:
+        return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['POST'])
+def user_logout(request):
+    logout(request)
+    return Response({'message': 'Logged out successfully.'})
