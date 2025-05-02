@@ -58,7 +58,6 @@ export default function Home() {
 
       const list = data.results ?? data; // ✅ use results or fallback
       const count = data.count ?? data.length ?? 0;
-
       setEntities(list);
       setTotalPages(Math.ceil(count / 8));
     };
@@ -95,6 +94,33 @@ export default function Home() {
   );
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (page <= 3) {
+        pages.push(1, 2, 3, 4, "...", totalPages);
+      } else if (page >= totalPages - 2) {
+        pages.push(
+          1,
+          "...",
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
+      } else {
+        pages.push(1, "...", page - 1, page, page + 1, "...", totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   return (
     // <div className='container'>
@@ -209,7 +235,7 @@ export default function Home() {
                   description={watch.description}
                   price={watch.price}
                   media={watch.media}
-                  seller={watch.seller}
+                  seller={watch.seller?.username}
                   category={watch.category}
                   condition={watch.condition}
                   statisticsEnabled={statisticsEnabled}
@@ -228,6 +254,7 @@ export default function Home() {
           currentPage={page}
           totalPages={totalPages}
           onPageChange={(page) => setPage(page)}
+          pageNumbers={generatePageNumbers()} // ✅ pass the calculated pages here
         />
       </section>
       <Footer />

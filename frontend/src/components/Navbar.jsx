@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import "../styles/components/Navbar.css";
 import { Heart, ShoppingCart, User, Moon } from "lucide-react";
+import UserDropdown from "./UserDropdown";
 export default function Navbar() {
   return (
     <div className='header-container'>
@@ -38,9 +39,7 @@ export default function Navbar() {
           <button className='icon-button'>
             <Heart className='icon' />
           </button>
-          <button className='icon-button'>
-            <User className='icon' />
-          </button>
+          <UserDropdown />
           <button className='icon-button'>
             <ShoppingCart className='icon' />
           </button>

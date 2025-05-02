@@ -1,20 +1,10 @@
 /** @format */
+import API from "./axios"; // Make sure path is correct
 
-const BASE_URL = "http://127.0.0.1:8000/api/watch/"; // Update if your API is under another path
-
-export async function fetchWatches(queryString) {
+export async function fetchWatches(queryString = "") {
   try {
-    const response = await fetch(
-      `http://localhost:8000/api/watches/?${queryString}`
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch watches");
-    }
-
-    const data = await response.json();
-
-    return data;
+    const response = await API.get(`/watches/?${queryString}`);
+    return response.data;
   } catch (error) {
     console.error("Error fetching watches:", error);
     return { results: [], count: 0 };
@@ -22,56 +12,68 @@ export async function fetchWatches(queryString) {
 }
 
 export async function fetchFilteredWatches(filters = {}) {
-  const query = new URLSearchParams(filters).toString();
-  const res = await fetch(`http://localhost:8000/api/watches/?${query}`);
-  const data = await res.json();
-  return data;
+  try {
+    const query = new URLSearchParams(filters).toString();
+    const response = await API.get(`/watches/?${query}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error filtering watches:", error);
+    return { results: [], count: 0 };
+  }
 }
 
 export async function fetchSortedWatches(sortKey = "") {
-  const query = new URLSearchParams({ sort_by: sortKey }).toString();
-  const res = await fetch(`http://localhost:8000/api/watches/?${query}`);
-  const data = await res.json();
-  return data;
+  try {
+    const query = new URLSearchParams({ sort_by: sortKey }).toString();
+    const response = await API.get(`/watches/?${query}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error sorting watches:", error);
+    return { results: [], count: 0 };
+  }
 }
 
 export async function createWatch(watchData) {
-  const response = await fetch("http://localhost:8000/api/watches/create/", {
-    method: "POST",
-
-    body: watchData,
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    console.log("Watch successfully created:", data);
-  } else {
-    const errors = await response.text();
-    console.error("Failed to create watch:", errors);
+  try {
+    const response = await API.post("/watches/create/", watchData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log("Watch successfully created:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to create watch:", error.response?.data || error);
+    throw error;
   }
 }
 
 export async function updateWatch(id, watchData) {
-  const response = await fetch(
-    `http://localhost:8000/api/watches/${id}/update/`,
-    {
-      method: "PATCH",
-
-      body: watchData,
-    }
-  );
-  if (!response.ok) {
-    const error = await response.text();
-    console.error("Update failed:", error);
+  try {
+    const response = await API.patch(`/watches/${id}/update/`, watchData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Update failed:", error.response?.data || error);
     throw new Error("Failed to update watch");
   }
-
-  return await response.json();
 }
 
 export async function deleteWatch(id) {
-  const res = await fetch(`http://localhost:8000/api/watches/${id}/delete/`, {
-    method: "DELETE",
-  });
-  return res.ok;
+  try {
+    const response = await API.delete(`/watches/${id}/delete/`);
+    return response.status === 204;
+  } catch (error) {
+    console.error("Delete failed:", error);
+    return false;
+  }
+}
+
+export async function fetchMyWatches() {
+  try {
+    const res = await API.get("/watches/my-watches/");
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch user's watches:", error);
+    return [];
+  }
 }

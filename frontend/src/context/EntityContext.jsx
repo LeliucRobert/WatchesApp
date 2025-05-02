@@ -9,7 +9,7 @@ import {
   updateWatch,
   deleteWatch,
 } from "@/api/watchApi";
-// Create context
+
 import { useBackendStatus } from "@/utils/BackendStatus";
 
 const OFFLINE_QUEUE_KEY = "offlineWatchQueue";
@@ -178,7 +178,7 @@ export const EntityProvider = ({ children }) => {
         data.append("condition", newEntity.condition);
         data.append("description", newEntity.description);
         data.append("price", newEntity.price);
-        data.append("seller", "John Doe");
+        // data.append("seller", "John Doe");
 
         (newEntity.media || []).forEach((file) => {
           if (file instanceof File) {
@@ -210,8 +210,7 @@ export const EntityProvider = ({ children }) => {
         data.append("condition", updatedEntity.condition);
         data.append("description", updatedEntity.description);
         data.append("price", updatedEntity.price);
-        data.append("seller", "John Doe");
-
+        // data.append("seller", "John Doe");
         (updatedEntity.media || []).forEach((file) => {
           if (file instanceof File) {
             data.append("media", file);

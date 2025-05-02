@@ -101,3 +101,20 @@
 .register-success {
   color: #2a9d8f;
 }
+
+.register-login-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #6b7280; /* gray-500 */
+}
+
+.login-link {
+  color: #3b82f6; /* blue-500 */
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.login-link:hover {
+  color: #2563eb; /* blue-600 */
+}

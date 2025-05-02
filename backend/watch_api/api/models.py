@@ -28,6 +28,16 @@ class Watch(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.category})"
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=["seller"]),
+            models.Index(fields=["category"]),
+            models.Index(fields=["condition"]),
+            models.Index(fields=["price"]),
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["seller", "price"]),
+        ]
 
 class WatchFile(models.Model):
     watch = models.ForeignKey(Watch, related_name="media", on_delete=models.CASCADE)
@@ -36,6 +46,24 @@ class WatchFile(models.Model):
 
     def __str__(self):
         return f"{self.watch.name} - {self.file_type}"
+
+
+class LogEntry(models.Model):
+    ACTION_CHOICES = [
+        ("CREATE", "Create"),
+        ("UPDATE", "Update"),
+        ("DELETE", "Delete"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="custom_logs")
+    action = models.CharField(max_length=10, choices=ACTION_CHOICES)
+    model_name = models.CharField(max_length=50)  # E.g., "Watch"
+    object_id = models.IntegerField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.action} {self.model_name} ({self.object_id}) at {self.timestamp}"
+
 
 class Profile(models.Model):
     ROLE_CHOICES = [

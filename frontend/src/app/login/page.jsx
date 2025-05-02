@@ -3,8 +3,11 @@
 import { useState } from "react";
 import { loginUser } from "@/api/userApi";
 import "../../styles/login.css";
-import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 export default function LoginPage() {
+  const { login } = useAuth();
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,10 +19,14 @@ export default function LoginPage() {
     setSuccess("");
 
     try {
-      await loginUser(username, password);
+      await login(username, password);
       setSuccess("Logged in successfully!");
       setUsername("");
       setPassword("");
+      const redirect =
+        sessionStorage.getItem("redirectAfterLogin") || "/explore";
+      sessionStorage.removeItem("redirectAfterLogin");
+      router.push(redirect);
     } catch (err) {
       setError("Login failed. Check your credentials.");
     }
@@ -69,6 +76,15 @@ export default function LoginPage() {
 
           {error && <p className='login-error'>{error}</p>}
           {success && <p className='login-success'>{success}</p>}
+          <p className='login-register-link'>
+            Not registered?{" "}
+            <span
+              onClick={() => router.push("/register")}
+              className='register-link'
+            >
+              Create a new account
+            </span>
+          </p>
         </form>
       </div>
     </div>

@@ -1,29 +1,34 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Watch, WatchFile
+from .models import Watch, WatchFile, LogEntry
 from django.contrib.auth.models import User
-from .serializers import WatchSerializer, WatchFileSerializer
+from .serializers import WatchSerializer, WatchFileSerializer, LogEntrySerializer
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.settings import api_settings
 from django.contrib.auth import authenticate, login, logout
-
-import os
-
+from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAdminUser
+from .utils.logging import create_log
 # GET all watches or POST (create new watch)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def watch_create(request):
     print(request.data)
     serializer = WatchSerializer(data=request.data , context={'request': request})
     if serializer.is_valid():
-        watch = serializer.save()
+
+        watch = serializer.save(seller=request.user)
         files = request.FILES.getlist('media')
 
         for file in files:
             file_type = 'image' if 'image' in file.content_type else 'video'
             WatchFile.objects.create(watch=watch, file=file, file_type=file_type)
+        print(request.user)
+        create_log(request.user, "CREATE", "Watch", watch.id)
 
         return Response(WatchSerializer(watch , context={'request': request}).data, status=status.HTTP_201_CREATED)
 
@@ -101,6 +106,7 @@ def watch_list_by_seller(request , seller_id):
     return Response(serializer.data)
 
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def watch_update(request, pk):
     try:
         watch = Watch.objects.get(pk=pk)
@@ -109,7 +115,7 @@ def watch_update(request, pk):
 
     serializer = WatchSerializer(watch, data=request.data, context={'request': request})
     if serializer.is_valid():
-        updated_watch = serializer.save()
+        updated_watch = serializer.save(seller=request.user)
 
         # Optional: delete previous media files if needed
         # updated_watch.media.all().delete()
@@ -122,6 +128,7 @@ def watch_update(request, pk):
         for file in files:
             file_type = 'image' if 'image' in file.content_type else 'video'
             WatchFile.objects.create(watch=updated_watch, file=file, file_type=file_type)
+        create_log(request.user, "UPDATE", "Watch", watch.id)
 
         return Response(WatchSerializer(updated_watch, context={'request': request}).data, status=status.HTTP_200_OK)
 
@@ -131,7 +138,7 @@ def watch_update(request, pk):
 def delete_watch(request, pk):
     try:
         watch = Watch.objects.get(pk=pk)
-
+        create_log(request.user, "DELETE", "Watch", watch.id)
         watch.delete()
         return Response({"message": "Watch deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     except Watch.DoesNotExist:
@@ -193,8 +200,126 @@ def user_login(request):
         return Response({'message': 'Login successful.'})
     else:
         return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
-    
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
+@api_view(["POST"])
+def login_view(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
+    else:
+        return Response({'error': 'Invalid credentials'}, status=401)
+from django.contrib.auth.hashers import make_password
+@api_view(["POST"])
+def register_view(request):
+
+    username = request.data.get('username')
+    password = request.data.get('password')
+    email = request.data.get('email')
+
+    if User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already taken'}, status=400)
+
+    user = User.objects.create(
+        username=username,
+        email=email,
+        password=make_password(password)
+    )
+
+    return Response({'message': 'User registered successfully!'})
+
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+@api_view(["POST"])
+def logout_view(request):
+    try:
+        refresh_token = request.data.get("refresh")
+
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+
+        return Response({"message": "Logged out successfully"})
+    except TokenError:
+        return Response({"error": "Invalid token"}, status=400)
+
 @api_view(['POST'])
 def user_logout(request):
     logout(request)
     return Response({'message': 'Logged out successfully.'})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user_view(request):
+    user = request.user
+    return Response({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "is_staff": user.is_staff,
+        "is_superuser": user.is_superuser,
+    })
+
+from django.db.models import Sum
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Optional: restrict to staff
+def total_value_per_seller(request):
+    if not request.user.is_staff:
+        return Response({"error": "Unauthorized"}, status=403)
+    data = (
+        User.objects
+        .filter(watches__isnull=False)
+        .annotate(total_value=Sum("watches__price"))
+        .values("id", "username", "total_value")
+    )
+    return Response(data)
+
+from django.db.models import Count
+
+@api_view(["GET"])
+def watches_per_category(request):
+    data = (
+        Watch.objects
+        .values("category")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+    )
+    return Response(data)
+
+from django.db.models import Avg
+
+@api_view(["GET"])
+def avg_price_by_condition(request):
+    data = (
+        Watch.objects
+        .values("condition")
+        .annotate(avg_price=Avg("price"))
+        .order_by("condition")
+    )
+    return Response(data)
+
+@api_view(["GET"])
+def top_sellers(request):
+    data = (
+        User.objects
+        .annotate(total=Count("watches"))
+        .filter(total__gt=0)
+        .order_by("-total")[:5]
+        .values("id", "username", "total")
+    )
+    return Response(data)
+
+@api_view(['GET'])
+def logs_list(request):
+    logs = LogEntry.objects.select_related("user").order_by("-timestamp")[:100]
+    serializer = LogEntrySerializer(logs, many=True)
+    return Response(serializer.data)

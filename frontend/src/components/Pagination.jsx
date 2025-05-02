@@ -4,14 +4,12 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // import "../styles/main.css";
 import "../styles/components/Pagination.css";
-export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  const pageNumbers = [];
-
-  // Show only 5 page numbers (can be improved)
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
+export default function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  pageNumbers,
+}) {
   return (
     <div className='pagination'>
       <button
@@ -24,17 +22,23 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       </button>
 
       <div className='pagination-numbers'>
-        {pageNumbers.map((number) => (
-          <button
-            key={number}
-            className={`pagination-number ${
-              currentPage === number ? "active" : ""
-            }`}
-            onClick={() => onPageChange(number)}
-          >
-            {number}
-          </button>
-        ))}
+        {pageNumbers.map((number, index) =>
+          number === "..." ? (
+            <span key={`ellipsis-${index}`} className='pagination-ellipsis'>
+              …
+            </span>
+          ) : (
+            <button
+              key={number}
+              className={`pagination-number ${
+                currentPage === number ? "active" : ""
+              }`}
+              onClick={() => onPageChange(number)}
+            >
+              {number}
+            </button>
+          )
+        )}
       </div>
 
       <button

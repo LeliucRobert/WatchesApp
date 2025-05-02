@@ -5,13 +5,15 @@
 import { useState } from "react";
 import { registerUser } from "@/api/userApi";
 import "../../styles/register.css";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,6 +88,12 @@ export default function RegisterPage() {
 
           {error && <p className='register-error'>{error}</p>}
           {success && <p className='register-success'>{success}</p>}
+          <p className='register-login-link'>
+            Already have an account?{" "}
+            <span onClick={() => router.push("/login")} className='login-link'>
+              Sign in
+            </span>
+          </p>
         </form>
       </div>
     </div>

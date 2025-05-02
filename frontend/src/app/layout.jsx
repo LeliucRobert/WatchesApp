@@ -5,6 +5,7 @@ import "./globals.css";
 import "../styles/global.css";
 import Navbar from "@/components/Navbar";
 import { EntityProvider } from "@/context/EntityContext";
+import { AuthProvider } from "@/context/AuthContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,13 +27,15 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className='header'>
-          <Navbar />
-        </header>
+        <AuthProvider>
+          <header className='header'>
+            <Navbar />
+          </header>
 
-        <main>
-          <EntityProvider>{children}</EntityProvider>
-        </main>
+          <main>
+            <EntityProvider>{children}</EntityProvider>{" "}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

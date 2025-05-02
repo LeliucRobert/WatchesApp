@@ -1,48 +1,43 @@
 /** @format */
 
+// userApi.js
+import axios from "./axios";
+import API from "./axios";
+const BASE_URL = "http://localhost:8000/api";
+
 export async function loginUser(username, password) {
-  const res = await fetch("http://localhost:8000/api/login/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-    // credentials: "include", // VERY IMPORTANT! 🔥 Send cookies
+  const res = await axios.post(`${BASE_URL}/login/`, {
+    username,
+    password,
   });
-  const data = await res.json();
-  console.log(data);
 
-  if (res.ok) {
-    alert("Login successful!");
-    // Redirect to dashboard or refresh page
-  } else {
-    alert(data.error || "Login failed.");
-  }
+  const data = res.data;
+  return data;
 }
 
-export async function registerUser(username, password) {
-  const res = await fetch("http://localhost:8000/api/register/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
+export async function registerUser(username, email, password) {
+  const res = await axios.post(`${BASE_URL}/register/`, {
+    username,
+    email,
+    password,
   });
-  const data = await res.json();
-  console.log(data);
 
-  if (res.ok) {
-    alert("Registered successfully! Now you can login.");
-  } else {
-    alert(data.error || "Registration failed.");
-  }
+  return res.data;
 }
 
-export async function logoutUser() {
-  const res = await fetch("http://localhost:8000/api/logout/", {
-    method: "POST",
-    credentials: "include",
-  });
+export async function logoutUser(refresh) {
+  if (!refresh) return;
 
-  if (res.ok) {
+  const res = await axios.post(`${BASE_URL}/logout/`, { refresh });
+
+  if (res.status === 200) {
     alert("Logged out successfully!");
   } else {
     alert("Failed to logout.");
   }
+}
+
+export async function fetchCurrentUser() {
+  const res = await API.get("/me/");
+  return res.data;
 }

@@ -11,8 +11,14 @@ urlpatterns = [
 
     path("start_generator/", views.api_start_generator, name='watch_generator_start'),
     path("stop_generator/", views.api_stop_generator, name='watch_generator_stop'),
-    path("register/", views.register , name="user_register"),
-    path('login/', views.user_login , name="user_login"),
-    path('logout/', views.user_logout , name="user_logout"),
-    path('my-watches/', views.my_watches , name="watch_list_user"),
+    path("register/", views.register_view , name="user_register"),
+    path('login/', views.login_view , name="user_login"),
+    path('logout/', views.logout_view , name="user_logout"),
+    path('watches/my-watches/', views.my_watches , name="watch_list_user"),
+    path("me/", views.current_user_view, name="current-user"),
+    path('total_value_per_seller/', views.total_value_per_seller, name="total_value_per_seller"),
+    path('watches_per_category/' , views.watches_per_category , name="watches_per_category"),
+    path('avg_price_by_condition/' , views.avg_price_by_condition , name="avg_price_by_condition"),
+    path('top_sellers/' , views.top_sellers , name="top_sellers"),
+    path('logs_list/' , views.logs_list , name="logs_list"),
 ]
