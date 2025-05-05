@@ -37,6 +37,25 @@ export async function logoutUser(refresh) {
   }
 }
 
+export async function getUserProfile() {
+  const response = await API.get("/user/profile/");
+  return response.data;
+}
+
+export async function updateUserProfile(data) {
+  const response = await API.put("/user/profile/", data);
+  return response.data;
+}
+
+// Change password
+export async function changeUserPassword(current_password, new_password) {
+  const response = await API.post("/user/change_password/", {
+    current_password,
+    new_password,
+  });
+  return response.data;
+}
+
 export async function fetchCurrentUser() {
   const res = await API.get("/me/");
   return res.data;

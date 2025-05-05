@@ -6,9 +6,11 @@ import { useState } from "react";
 import { registerUser } from "@/api/userApi";
 import "../../styles/register.css";
 import { useRouter } from "next/navigation";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,9 +28,10 @@ export default function RegisterPage() {
     }
 
     try {
-      await registerUser(username, password);
+      await registerUser(username, email, password);
       setSuccess("Registered successfully!");
       setUsername("");
+      setEmail("");
       setPassword("");
       setConfirmPassword("");
     } catch (err) {
@@ -37,9 +40,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className='register-page'>
-      <div className='register-container'>
-        {/* <div className='logo'>
+    <ProtectedRoute>
+      <div className='register-page'>
+        <div className='register-container'>
+          {/* <div className='logo'>
           <Image
             src='/images/Watch.png'
             alt='Watchly Logo'
@@ -50,52 +54,65 @@ export default function RegisterPage() {
           <span className='logo-text'>Watchly</span>
         </div> */}
 
-        {/* Title */}
-        <h1 className='register-title'>Sign up</h1>
+          {/* Title */}
+          <h1 className='register-title'>Sign up</h1>
 
-        {/* Form */}
-        <form className='register-form' onSubmit={handleSubmit}>
-          <input
-            className='register-input'
-            type='text'
-            placeholder='Username'
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+          {/* Form */}
+          <form className='register-form' onSubmit={handleSubmit}>
+            <input
+              className='register-input'
+              type='text'
+              placeholder='Username'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
 
-          <input
-            className='register-input'
-            type='password'
-            placeholder='Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+            <input
+              className='register-input'
+              type='email'
+              placeholder='Email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-          <input
-            className='register-input'
-            type='password'
-            placeholder='Confirm Password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
+            <input
+              className='register-input'
+              type='password'
+              placeholder='Password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-          <button className='register-button' type='submit'>
-            Register
-          </button>
+            <input
+              className='register-input'
+              type='password'
+              placeholder='Confirm Password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
 
-          {error && <p className='register-error'>{error}</p>}
-          {success && <p className='register-success'>{success}</p>}
-          <p className='register-login-link'>
-            Already have an account?{" "}
-            <span onClick={() => router.push("/login")} className='login-link'>
-              Sign in
-            </span>
-          </p>
-        </form>
+            <button className='register-button' type='submit'>
+              Register
+            </button>
+
+            {error && <p className='register-error'>{error}</p>}
+            {success && <p className='register-success'>{success}</p>}
+            <p className='register-login-link'>
+              Already have an account?{" "}
+              <span
+                onClick={() => router.push("/login")}
+                className='login-link'
+              >
+                Sign in
+              </span>
+            </p>
+          </form>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

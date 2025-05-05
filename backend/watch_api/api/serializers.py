@@ -17,6 +17,11 @@ class WatchFileSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         return request.build_absolute_uri(obj.file.url)
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "email", "first_name", "last_name", "is_staff", "date_joined"]
+
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

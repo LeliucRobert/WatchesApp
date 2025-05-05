@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("refresh");
       setAccess(null);
       setRefresh(null);
-      // router.push("/login");
+      router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }

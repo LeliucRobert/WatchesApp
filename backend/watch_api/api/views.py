@@ -176,14 +176,14 @@ def api_stop_generator(request):
 def register(request):
     username = request.data.get('username')
     password = request.data.get('password')
-
+    email = request.data.get('email')
     if not username or not password:
         return Response({'error': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(username=username).exists():
         return Response({'error': 'Username already taken.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(username=username, password=password)
+    user = User.objects.create_user(username=username, email=email, password=password)
     return Response({'message': 'User registered successfully.'})
 # from django.views.decorators.csrf import csrf_exempt
 
@@ -271,10 +271,9 @@ def current_user_view(request):
 from django.db.models import Sum
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])  # Optional: restrict to staff
+
 def total_value_per_seller(request):
-    if not request.user.is_staff:
-        return Response({"error": "Unauthorized"}, status=403)
+    
     data = (
         User.objects
         .filter(watches__isnull=False)
@@ -323,3 +322,59 @@ def logs_list(request):
     logs = LogEntry.objects.select_related("user").order_by("-timestamp")[:100]
     serializer = LogEntrySerializer(logs, many=True)
     return Response(serializer.data)
+
+from django.db.models.functions import Substr
+
+@api_view(["GET"])
+def watches_grouped_by_name_letter(request):
+    data = (
+        Watch.objects
+        .annotate(first_letter=Substr("name", 1, 1))
+        .values("first_letter")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+    )
+    return Response(data)
+
+from .serializers import UserProfileSerializer
+
+@api_view(["GET", "PUT"])
+@permission_classes([IsAuthenticated])
+def user_profile_view(request):
+    if request.method == "GET":
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data)
+    elif request.method == "PUT":
+        serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    current_password = request.data.get("current_password")
+    new_password = request.data.get("new_password")
+
+    if not user.check_password(current_password):
+        return Response({"error": "Current password is incorrect"}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    return Response({"message": "Password updated successfully"})
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    current_password = request.data.get("current_password")
+    new_password = request.data.get("new_password")
+
+    if not user.check_password(current_password):
+        return Response({"error": "Current password is incorrect"}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    return Response({"message": "Password updated successfully"})

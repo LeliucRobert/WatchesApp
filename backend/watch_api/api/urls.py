@@ -21,4 +21,8 @@ urlpatterns = [
     path('avg_price_by_condition/' , views.avg_price_by_condition , name="avg_price_by_condition"),
     path('top_sellers/' , views.top_sellers , name="top_sellers"),
     path('logs_list/' , views.logs_list , name="logs_list"),
+    path("watches_grouped_name/", views.watches_grouped_by_name_letter, name="watches_grouped_name"),
+    path("user/profile/", views.user_profile_view, name="profile"),
+    path("user/change_password/", views.change_password, name="change_password"),
+
 ]

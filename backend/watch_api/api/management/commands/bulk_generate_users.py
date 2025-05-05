@@ -19,10 +19,10 @@ class Command(BaseCommand):
         for _ in range(count):
             username = fake.unique.user_name()
             email = fake.unique.email()
-            password = "password123"  # Optional: You can hash it
+            password = "password123" 
 
             users.append(User(username=username, email=email))
-            users[-1].set_password(password)  # Set password properly
+            users[-1].set_password(password) 
 
         User.objects.bulk_create(users, batch_size=1000)
 
