@@ -40,10 +40,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <ProtectedRoute>
-      <div className='register-page'>
-        <div className='register-container'>
-          {/* <div className='logo'>
+    <div className='register-page'>
+      <div className='register-container'>
+        {/* <div className='logo'>
           <Image
             src='/images/Watch.png'
             alt='Watchly Logo'
@@ -54,65 +53,61 @@ export default function RegisterPage() {
           <span className='logo-text'>Watchly</span>
         </div> */}
 
-          {/* Title */}
-          <h1 className='register-title'>Sign up</h1>
+        {/* Title */}
+        <h1 className='register-title'>Sign up</h1>
 
-          {/* Form */}
-          <form className='register-form' onSubmit={handleSubmit}>
-            <input
-              className='register-input'
-              type='text'
-              placeholder='Username'
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+        {/* Form */}
+        <form className='register-form' onSubmit={handleSubmit}>
+          <input
+            className='register-input'
+            type='text'
+            placeholder='Username'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
 
-            <input
-              className='register-input'
-              type='email'
-              placeholder='Email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <input
+            className='register-input'
+            type='email'
+            placeholder='Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-            <input
-              className='register-input'
-              type='password'
-              placeholder='Password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <input
+            className='register-input'
+            type='password'
+            placeholder='Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-            <input
-              className='register-input'
-              type='password'
-              placeholder='Confirm Password'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
+          <input
+            className='register-input'
+            type='password'
+            placeholder='Confirm Password'
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
 
-            <button className='register-button' type='submit'>
-              Register
-            </button>
+          <button className='register-button' type='submit'>
+            Register
+          </button>
 
-            {error && <p className='register-error'>{error}</p>}
-            {success && <p className='register-success'>{success}</p>}
-            <p className='register-login-link'>
-              Already have an account?{" "}
-              <span
-                onClick={() => router.push("/login")}
-                className='login-link'
-              >
-                Sign in
-              </span>
-            </p>
-          </form>
-        </div>
+          {error && <p className='register-error'>{error}</p>}
+          {success && <p className='register-success'>{success}</p>}
+          <p className='register-login-link'>
+            Already have an account?{" "}
+            <span onClick={() => router.push("/login")} className='login-link'>
+              Sign in
+            </span>
+          </p>
+        </form>
       </div>
-    </ProtectedRoute>
+    </div>
   );
 }

@@ -7,7 +7,9 @@ import {
   getUserProfile,
   updateUserProfile,
   changeUserPassword,
+  deleteAccount,
 } from "@/api/userApi";
+import { useRouter } from "next/navigation";
 import "../../styles/profile.css";
 export default function ProfilePage() {
   const { logout } = useAuth();
@@ -18,6 +20,8 @@ export default function ProfilePage() {
     current_password: "",
     new_password: "",
   });
+  const router = useRouter();
+
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
@@ -56,6 +60,19 @@ export default function ProfilePage() {
       logout();
     } catch (err) {
       setMsg("Failed to change password.");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      setMsg("Account Deleted succesfully");
+      setTimeout(() => {
+        localStorage.clear();
+        router.push("/login");
+      }, 200);
+    } catch (err) {
+      setMsg("Failed to delete account.");
     }
   };
 
@@ -139,6 +156,13 @@ export default function ProfilePage() {
         onClick={handlePasswordChange}
       >
         Change Password
+      </button>
+
+      <button
+        className='profile-button delete-btn'
+        onClick={handleDeleteAccount}
+      >
+        Delete Account
       </button>
 
       {msg && <p className='profile-message'>{msg}</p>}

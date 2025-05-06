@@ -55,7 +55,7 @@ class LogEntry(models.Model):
         ("DELETE", "Delete"),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="custom_logs")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="custom_logs")
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     model_name = models.CharField(max_length=50)  # E.g., "Watch"
     object_id = models.IntegerField(null=True, blank=True)

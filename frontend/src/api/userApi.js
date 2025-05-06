@@ -56,6 +56,11 @@ export async function changeUserPassword(current_password, new_password) {
   return response.data;
 }
 
+export async function deleteAccount() {
+  const response = await API.delete("/user/delete_account/", {});
+  return response.data;
+}
+
 export async function fetchCurrentUser() {
   const res = await API.get("/me/");
   return res.data;

@@ -24,5 +24,6 @@ urlpatterns = [
     path("watches_grouped_name/", views.watches_grouped_by_name_letter, name="watches_grouped_name"),
     path("user/profile/", views.user_profile_view, name="profile"),
     path("user/change_password/", views.change_password, name="change_password"),
+    path("user/delete_account/" , views.delete_account , name="delete_account"),
 
 ]

@@ -172,19 +172,21 @@ def api_stop_generator(request):
 
 
 
-@api_view(['POST'])
-def register(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
-    email = request.data.get('email')
-    if not username or not password:
-        return Response({'error': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['POST'])
+# def register(request):
+#     username = request.data.get('username')
+#     password = request.data.get('password')
+#     email = request.data.get('email')
+#     if not username or not password:
+#         return Response({'error': 'Username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already taken.'}, status=status.HTTP_400_BAD_REQUEST)
+#     if User.objects.filter(username=username).exists():
+#         return Response({'error': 'Username already taken.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(username=username, email=email, password=password)
-    return Response({'message': 'User registered successfully.'})
+#     user = User.objects.create_user(username=username, email=email, password=password)
+#     create_log("CREATE", "User", user.id)
+
+#     return Response({'message': 'User registered successfully.'})
 # from django.views.decorators.csrf import csrf_exempt
 
 # @csrf_exempt
@@ -234,6 +236,7 @@ def register_view(request):
         email=email,
         password=make_password(password)
     )
+    create_log(user, "CREATE", "User", user.id)
 
     return Response({'message': 'User registered successfully!'})
 
@@ -346,6 +349,9 @@ def user_profile_view(request):
         return Response(serializer.data)
     elif request.method == "PUT":
         serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+        print(request)
+        create_log(request.user, "UPDATE", "User", request.user.id)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -363,18 +369,30 @@ def change_password(request):
 
     user.set_password(new_password)
     user.save()
+    create_log(request.user, "UPDATE", "User", user.id)
+
     return Response({"message": "Password updated successfully"})
 
-@api_view(["POST"])
+@api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def change_password(request):
+def delete_account(request):
     user = request.user
-    current_password = request.data.get("current_password")
-    new_password = request.data.get("new_password")
+    create_log(request.user, "DELETE", "User", user.id)
+    
+    user.delete()
+    
+    return Response({"message": "Account deleted"}, status=200)
 
-    if not user.check_password(current_password):
-        return Response({"error": "Current password is incorrect"}, status=400)
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+# def change_password(request):
+#     user = request.user
+#     current_password = request.data.get("current_password")
+#     new_password = request.data.get("new_password")
 
-    user.set_password(new_password)
-    user.save()
-    return Response({"message": "Password updated successfully"})
+#     if not user.check_password(current_password):
+#         return Response({"error": "Current password is incorrect"}, status=400)
+
+#     user.set_password(new_password)
+#     user.save()
+#     return Response({"message": "Password updated successfully"})
