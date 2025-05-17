@@ -17,12 +17,12 @@ class Command(BaseCommand):
         ]
 
         if not available_files:
-            self.stdout.write(self.style.ERROR("❌ No image files found in watch_media/."))
+            self.stdout.write(self.style.ERROR(" No image files found in watch_media/."))
             return
 
         watches = Watch.objects.all()
         if not watches.exists():
-            self.stdout.write(self.style.ERROR("❌ No Watch objects found."))
+            self.stdout.write(self.style.ERROR(" No Watch objects found."))
             return
 
         self.stdout.write(self.style.WARNING(f"📦 Preparing WatchFiles for {watches.count()} watches..."))
@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
             # Print progress
             if index % 1000 == 0 or index == total:
-                self.stdout.write(f"✅ Processed {index}/{total} watches")
+                self.stdout.write(f" Processed {index}/{total} watches")
 
         WatchFile.objects.bulk_create(watchfiles, batch_size=1000)
-        self.stdout.write(self.style.SUCCESS(f"✅ Successfully created {len(watchfiles)} WatchFile objects."))
+        self.stdout.write(self.style.SUCCESS(f" Successfully created {len(watchfiles)} WatchFile objects."))

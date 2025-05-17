@@ -1,0 +1,4 @@
+your DB name: django_db_mpp
+your RDS master username: mpp_db
+your RDS password: mpp_db123
+your RDS endpoint
