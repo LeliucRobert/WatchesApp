@@ -4,7 +4,7 @@
 import axios from "./axios";
 import API from "./axios";
 // const BASE_URL = "http://localhost:8000/api";
-const BASE_URL = "${process.env.NEXT_PUBLIC_API_URL}/api";
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
 
 export async function loginUser(username, password) {
   const res = await axios.post(`${BASE_URL}/login/`, {
