@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-55=fr!*sgs)m^*(h%n%p50-uphd(#84)(+jbmh1thx@zc1c7_#
 DEBUG = True
 STATICFILES_DIRS = [BASE_DIR / "static"]  
 STATIC_ROOT = BASE_DIR / "staticfiles"
-ALLOWED_HOSTS = [13.49.243.212 , '*']
+ALLOWED_HOSTS = ['13.49.243.212' , '*']
 
 WATCH_GENERATOR_INTERVAL = 20
 # Application definition
