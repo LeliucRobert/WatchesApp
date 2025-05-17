@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "${process.env.NEXT_PUBLIC_API_URL}/api",
   headers: { "Content-Type": "application/json" },
 });
 
@@ -34,7 +34,7 @@ API.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/token/refresh/",
+          "${process.env.NEXT_PUBLIC_API_URL}/api/token/refresh/",
           {
             refresh,
           }
