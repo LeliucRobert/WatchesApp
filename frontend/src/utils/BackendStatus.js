@@ -1,7 +1,9 @@
 /** @format */
 
 import { useEffect, useState } from "react";
-export function useBackendStatus(pingUrl = "http://localhost:8000/api/ping/") {
+export function useBackendStatus(
+  pingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/ping/`
+) {
   const [isOffline, setIsOffline] = useState(false);
   const [isServerDown, setIsServerDown] = useState(false);
   const [statusChecked, setStatusChecked] = useState(false); // ✅
