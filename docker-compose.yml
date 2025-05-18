@@ -1,0 +1,16 @@
+# @format
+
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app
+      - ./backend/db.sqlite3:/app/db.sqlite3
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+    command: uvicorn watch_api.asgi:application --host 0.0.0.0 --port 8000
